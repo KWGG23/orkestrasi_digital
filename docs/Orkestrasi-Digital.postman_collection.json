@@ -1,0 +1,593 @@
+{
+  "info": {
+    "_postman_id": "orkestrasi-digital-api-v1",
+    "name": "Orkestrasi Digital",
+    "description": "API backend untuk sistem Bank Sampah Digital dan Portal Dusun Digital.\n\n**Base URL:** `http://localhost:8000/api/v1`\n\n**Auth:** Endpoint bertanda 🔒 membutuhkan Bearer token. Login dulu via `POST /auth/login`, token akan tersimpan otomatis ke variable `{{token}}`.\n\n**Response format:**\n```json\n{ \"success\": true, \"message\": \"OK\", \"data\": {...}, \"meta\": {...} }\n```\n\n**Kontak BE:** vincentius.erwan23@gmail.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api/v1",
+      "type": "string",
+      "description": "Ganti ke URL production saat deploy"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string",
+      "description": "Terisi otomatis setelah login berhasil"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    pm.collectionVariables.set('token', json.data.token);",
+                  "    console.log('✅ Token tersimpan:', json.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@desadijital.id\",\n  \"password\": \"password\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login admin. Token disimpan otomatis ke `{{token}}` via test script."
+          }
+        },
+        {
+          "name": "Get Current User (me) 🔒",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Cek identitas admin yang sedang login."
+          }
+        },
+        {
+          "name": "Logout 🔒",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set('token', '');",
+                  "console.log('Token dihapus.');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            },
+            "description": "Revoke token aktif. Token dihapus dari variable otomatis."
+          }
+        }
+      ]
+    },
+    {
+      "name": "🗑️ Bank Sampah",
+      "item": [
+        {
+          "name": "Jenis Sampah",
+          "item": [
+            {
+              "name": "List Jenis Sampah",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/jenis-sampah",
+                  "host": ["{{base_url}}"],
+                  "path": ["jenis-sampah"]
+                },
+                "description": "List semua jenis sampah yang aktif, diurutkan per kategori. Dipakai FE untuk populate dropdown saat input setoran."
+              }
+            },
+            {
+              "name": "Update Harga Jenis Sampah 🔒",
+              "request": {
+                "method": "PUT",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"harga_per_satuan\": 3500,\n  \"aktif\": true\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/jenis-sampah/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["jenis-sampah", "1"]
+                },
+                "description": "Update harga beli per satuan. Harga baru akan berlaku untuk setoran berikutnya (harga lama tersimpan di detail_setoran)."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Nasabah",
+          "item": [
+            {
+              "name": "List Nasabah",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/nasabah?q=siti",
+                  "host": ["{{base_url}}"],
+                  "path": ["nasabah"],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "siti",
+                      "description": "Search by nama atau no_anggota (opsional)"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "description": "Halaman (default: 1, per page: 20)",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "description": "List nasabah dengan pagination. Search menggunakan query param `?q=`."
+              }
+            },
+            {
+              "name": "Tambah Nasabah",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nama\": \"Budi Santoso\",\n  \"no_anggota\": \"KRA-011\",\n  \"alamat\": \"Dusun Karangasem, Muntilan\",\n  \"rt\": \"01\",\n  \"rw\": \"02\",\n  \"no_hp\": \"081234567899\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/nasabah",
+                  "host": ["{{base_url}}"],
+                  "path": ["nasabah"]
+                },
+                "description": "`no_anggota` harus unik. Format saran: `KRA-XXX` untuk Karangasem."
+              }
+            },
+            {
+              "name": "Detail Nasabah",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/nasabah/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["nasabah", "1"]
+                },
+                "description": "Return detail nasabah beserta 10 setoran terakhir (dengan detail item tiap setoran)."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Setoran",
+          "item": [
+            {
+              "name": "Buat Setoran (Nota)",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id_nasabah\": 1,\n  \"tanggal\": \"2026-07-03\",\n  \"metode\": \"tabung\",\n  \"catatan\": \"Setoran rutin minggu ini\",\n  \"items\": [\n    {\n      \"id_jenis_sampah\": 1,\n      \"berat_kg\": 2.5\n    },\n    {\n      \"id_jenis_sampah\": 5,\n      \"berat_kg\": 1.2\n    }\n  ]\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/setoran",
+                  "host": ["{{base_url}}"],
+                  "path": ["setoran"]
+                },
+                "description": "Buat nota setoran baru. `no_nota` di-generate otomatis (format: `NOT-YYYYMMDD-XXXX`).\n\n**metode:**\n- `tunai` — uang langsung diberikan ke nasabah\n- `tabung` — masuk tabungan digital\n- `tukar_barang` — ditukar barang\n\nHarga per item diambil dari master `jenis_sampahs` saat transaksi (snapshot harga)."
+              }
+            },
+            {
+              "name": "Detail Setoran",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/setoran/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["setoran", "1"]
+                },
+                "description": "Detail nota beserta semua item sampah, nasabah, dan total."
+              }
+            },
+            {
+              "name": "Download PDF Nota",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/setoran/1/pdf",
+                  "host": ["{{base_url}}"],
+                  "path": ["setoran", "1", "pdf"]
+                },
+                "description": "Download nota PDF ukuran A5. Langsung buka di browser atau arahkan ke `<a href>` untuk print."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tabungan",
+          "item": [
+            {
+              "name": "Riwayat Tabungan Nasabah",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/tabungan/1?page=1",
+                  "host": ["{{base_url}}"],
+                  "path": ["tabungan", "1"],
+                  "query": [
+                    { "key": "page", "value": "1", "description": "Pagination (20 per halaman)" }
+                  ]
+                },
+                "description": "Riwayat transaksi tabungan nasabah (masuk & keluar), diurutkan terbaru. Response menyertakan saldo saat ini."
+              }
+            },
+            {
+              "name": "Tarik Tabungan",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id_nasabah\": 1,\n  \"jumlah\": 10000,\n  \"keterangan\": \"Penarikan untuk kebutuhan pribadi\"\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/tabungan/tarik",
+                  "host": ["{{base_url}}"],
+                  "path": ["tabungan", "tarik"]
+                },
+                "description": "Penarikan tabungan. Minimal penarikan Rp 1.000. Akan error 422 jika saldo tidak mencukupi."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Laporan 🔒",
+          "item": [
+            {
+              "name": "Laporan Harian",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/laporan/harian?tanggal=2026-07-03",
+                  "host": ["{{base_url}}"],
+                  "path": ["laporan", "harian"],
+                  "query": [
+                    {
+                      "key": "tanggal",
+                      "value": "2026-07-03",
+                      "description": "Format: YYYY-MM-DD. Default: hari ini"
+                    }
+                  ]
+                },
+                "description": "Rekap setoran satu hari. Response berisi total nota, total harga, breakdown per metode, dan list semua setoran."
+              }
+            },
+            {
+              "name": "Laporan Bulanan",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/laporan/bulanan?bulan=2026-07",
+                  "host": ["{{base_url}}"],
+                  "path": ["laporan", "bulanan"],
+                  "query": [
+                    {
+                      "key": "bulan",
+                      "value": "2026-07",
+                      "description": "Format: YYYY-MM. Default: bulan ini"
+                    }
+                  ]
+                },
+                "description": "Rekap bulanan. Response berisi total, breakdown per metode, dan rekap per hari."
+              }
+            },
+            {
+              "name": "Export Excel",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/laporan/export?bulan=2026-07",
+                  "host": ["{{base_url}}"],
+                  "path": ["laporan", "export"],
+                  "query": [
+                    {
+                      "key": "bulan",
+                      "value": "2026-07",
+                      "description": "Format: YYYY-MM. Default: bulan ini"
+                    }
+                  ]
+                },
+                "description": "Download file `.xlsx` rekap bulanan. Klik 'Send and Download' di Postman."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "🗺️ Portal Desa",
+      "item": [
+        {
+          "name": "UMKM",
+          "item": [
+            {
+              "name": "List UMKM",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/umkm?dusun=karangasem&kategori=kuliner&q=warung",
+                  "host": ["{{base_url}}"],
+                  "path": ["umkm"],
+                  "query": [
+                    {
+                      "key": "dusun",
+                      "value": "karangasem",
+                      "description": "Filter: karangasem | tegalwungu (opsional)"
+                    },
+                    {
+                      "key": "kategori",
+                      "value": "kuliner",
+                      "description": "Filter: kuliner | kerajinan | pertanian | jasa | perdagangan (opsional)"
+                    },
+                    {
+                      "key": "q",
+                      "value": "warung",
+                      "description": "Search nama_usaha / nama_pemilik / deskripsi (opsional)"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "description": "List UMKM aktif dengan filter. Semua param opsional, bisa dikombinasi. Response menyertakan koordinat lat/lng untuk Leaflet marker."
+              }
+            },
+            {
+              "name": "Detail UMKM",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/umkm/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["umkm", "1"]
+                },
+                "description": "Detail lengkap UMKM termasuk produk_utama, foto_produk, platform_online, dll."
+              }
+            },
+            {
+              "name": "Tambah UMKM 🔒",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    { "key": "nama_usaha", "value": "Warung Bu Sari", "type": "text" },
+                    { "key": "nama_pemilik", "value": "Sari Wulandari", "type": "text" },
+                    { "key": "dusun", "value": "karangasem", "type": "text" },
+                    { "key": "kategori", "value": "kuliner", "type": "text" },
+                    { "key": "deskripsi", "value": "Warung makan rumahan, buka setiap hari", "type": "text" },
+                    { "key": "produk_utama[]", "value": "Nasi rames", "type": "text" },
+                    { "key": "produk_utama[]", "value": "Sayur lodeh", "type": "text" },
+                    { "key": "kisaran_harga", "value": "Rp 8.000 - Rp 20.000", "type": "text" },
+                    { "key": "no_wa", "value": "081234567890", "type": "text" },
+                    { "key": "instagram", "value": "warungbusari", "type": "text" },
+                    { "key": "jam_buka", "value": "06.00 - 21.00", "type": "text" },
+                    { "key": "hari_buka", "value": "Senin - Minggu", "type": "text" },
+                    { "key": "metode_bayar[]", "value": "Tunai", "type": "text" },
+                    { "key": "metode_bayar[]", "value": "QRIS", "type": "text" },
+                    { "key": "punya_nib", "value": "0", "type": "text" },
+                    { "key": "lat", "value": "-7.5812345", "type": "text" },
+                    { "key": "lng", "value": "110.2345678", "type": "text" },
+                    {
+                      "key": "foto_usaha",
+                      "type": "file",
+                      "src": "",
+                      "description": "Max 5MB, jpg/jpeg/png/webp. Di-resize otomatis ke max 800px"
+                    },
+                    {
+                      "key": "foto_produk[]",
+                      "type": "file",
+                      "src": "",
+                      "description": "Max 5 foto produk"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/umkm",
+                  "host": ["{{base_url}}"],
+                  "path": ["umkm"]
+                },
+                "description": "Tambah UMKM baru. Gunakan `multipart/form-data` (bukan JSON) karena ada upload foto. Array dikirim dengan key berakhiran `[]`."
+              }
+            },
+            {
+              "name": "Edit UMKM 🔒",
+              "request": {
+                "method": "PUT",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"kisaran_harga\": \"Rp 10.000 - Rp 25.000\",\n  \"jam_buka\": \"07.00 - 21.00\",\n  \"aktif\": true\n}",
+                  "options": { "raw": { "language": "json" } }
+                },
+                "url": {
+                  "raw": "{{base_url}}/umkm/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["umkm", "1"]
+                },
+                "description": "Update partial field UMKM (semua field opsional). Jika ingin update foto, gunakan `multipart/form-data` seperti endpoint Tambah. Foto lama dihapus otomatis saat diganti."
+              }
+            },
+            {
+              "name": "Hapus UMKM 🔒",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/umkm/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["umkm", "1"]
+                },
+                "description": "Hapus UMKM beserta semua foto dari storage."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Layer GeoJSON",
+          "item": [
+            {
+              "name": "Batas Dusun (admin-karangasem + admin-tegalwungu)",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/layers/admin",
+                  "host": ["{{base_url}}"],
+                  "path": ["layers", "admin"]
+                },
+                "description": "GeoJSON batas administratif 2 dusun (karangasem + tegalwungu) digabung jadi satu FeatureCollection. Load langsung ke `L.geoJSON()` Leaflet."
+              }
+            },
+            {
+              "name": "Layer Kerentanan Bencana",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/layers/bencana",
+                  "host": ["{{base_url}}"],
+                  "path": ["layers", "bencana"]
+                },
+                "description": "GeoJSON kerentanan tanah. Sumber: BNPB/BIG/survei lapangan. Placeholder kosong sampai data tersedia."
+              }
+            },
+            {
+              "name": "Layer Fasilitas Umum",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/layers/fasilitas",
+                  "host": ["{{base_url}}"],
+                  "path": ["layers", "fasilitas"]
+                },
+                "description": "GeoJSON fasilitas umum (masjid, posyandu, jalan, dll). Placeholder kosong sampai data survei lapangan tersedia."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Profil Dusun",
+          "item": [
+            {
+              "name": "Get Profil Dusun",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/profil/karangasem",
+                  "host": ["{{base_url}}"],
+                  "path": ["profil", "karangasem"]
+                },
+                "description": "Profil dusun beserta konten JSON (sejarah, demografi, potensi, dll). Ganti `karangasem` dengan `tegalwungu` untuk dusun satunya. Response `data.konten` berisi struktur bebas yang bisa diatur admin."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Pengumuman",
+          "item": [
+            {
+              "name": "List Pengumuman Aktif",
+              "request": {
+                "auth": { "type": "noauth" },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/pengumuman",
+                  "host": ["{{base_url}}"],
+                  "path": ["pengumuman"]
+                },
+                "description": "List semua pengumuman aktif, diurutkan terbaru. Tampilkan di homepage portal desa."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

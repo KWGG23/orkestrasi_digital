@@ -1,0 +1,56 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap');
+
+@theme {
+  --font-heading: "Lora", serif;
+  --font-body: "Raleway", sans-serif;
+
+  /* Earth + green palette */
+  --color-primary: #15803d;
+  --color-primary-dark: #14532d;
+  --color-primary-light: #22c55e;
+  --color-accent: #a16207;
+  --color-accent-light: #d97706;
+
+  --color-sand: #f5f0e6;
+  --color-clay: #c2703d;
+  --color-bark: #4a3728;
+  --color-moss: #e8f0f1;
+
+  --color-background: #f8faf7;
+  --color-foreground: #14532d;
+  --color-muted: #64748b;
+  --color-border: #d9e8dc;
+
+  --animate-drift: drift 18s ease-in-out infinite;
+  --animate-rise: rise 0.7s ease-out both;
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(-2%, 3%) rotate(4deg); }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background-color: var(--color-background);
+  color: var(--color-bark);
+}

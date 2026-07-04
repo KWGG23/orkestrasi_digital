@@ -1,0 +1,18 @@
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+
+# Claude Code local settings (personal overrides, not shared)
+.claude/settings.local.json
+
+# Python bytecode cache (from .claude skill scripts)
+__pycache__/
+*.pyc
+
+# Env files at root, just in case
+.env
+.env.local
