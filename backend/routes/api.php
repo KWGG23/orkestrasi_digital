@@ -26,22 +26,22 @@ Route::prefix('v1')->group(function () {
     // Jenis sampah — list publik, update admin only
     Route::get('jenis-sampah', [JenisSampahController::class, 'index']);
 
-    // Nasabah
+    // Nasabah — pencarian & detail publik (self-service saldo), input nasabah admin only
     Route::get('nasabah', [NasabahController::class, 'index']);
-    Route::post('nasabah', [NasabahController::class, 'store']);
     Route::get('nasabah/{id}', [NasabahController::class, 'show']);
 
-    // Setoran
-    Route::post('setoran', [SetoranController::class, 'store']);
+    // Setoran — detail & PDF publik, input setoran admin only
     Route::get('setoran/{id}', [SetoranController::class, 'show']);
     Route::get('setoran/{id}/pdf', [SetoranController::class, 'pdf']);
 
-    // Tabungan
+    // Tabungan — riwayat publik (self-service saldo), tarik tabungan admin only
     Route::get('tabungan/{nasabahId}', [TabunganController::class, 'show']);
-    Route::post('tabungan/tarik', [TabunganController::class, 'tarik']);
 
-    // Admin-only routes (Sanctum)
+    // Admin-only routes (Sanctum) — aksi pengurus, bukan self-service warga
     Route::middleware('auth:sanctum')->group(function () {
+        Route::post('nasabah', [NasabahController::class, 'store']);
+        Route::post('setoran', [SetoranController::class, 'store']);
+        Route::post('tabungan/tarik', [TabunganController::class, 'tarik']);
         Route::put('jenis-sampah/{id}', [JenisSampahController::class, 'update']);
         Route::get('laporan/harian', [LaporanController::class, 'harian']);
         Route::get('laporan/bulanan', [LaporanController::class, 'bulanan']);

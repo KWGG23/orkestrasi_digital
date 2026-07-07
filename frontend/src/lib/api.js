@@ -2,12 +2,20 @@ export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localho
 
 // Bungkus fetch ke API Laravel. Mengembalikan { data, meta } sesuai kontrak
 // ApiResponse backend, dan melempar error dengan pesan dari body bila gagal.
-export async function apiGet(path, params = {}) {
+async function request(method, path, { params, body, token } = {}) {
   const query = new URLSearchParams(
-    Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== '')
+    Object.entries(params ?? {}).filter(([, v]) => v !== undefined && v !== null && v !== '')
   ).toString()
 
-  const res = await fetch(`${API_BASE_URL}${path}${query ? `?${query}` : ''}`)
+  const headers = { Accept: 'application/json' }
+  if (body !== undefined) headers['Content-Type'] = 'application/json'
+  if (token) headers['Authorization'] = `Bearer ${token}`
+
+  const res = await fetch(`${API_BASE_URL}${path}${query ? `?${query}` : ''}`, {
+    method,
+    headers,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  })
   const json = await res.json().catch(() => null)
 
   if (!res.ok || !json?.success) {
@@ -15,6 +23,18 @@ export async function apiGet(path, params = {}) {
   }
 
   return { data: json.data, meta: json.meta ?? null, message: json.message }
+}
+
+export async function apiGet(path, params = {}, token = null) {
+  return request('GET', path, { params, token })
+}
+
+export async function apiPost(path, body = {}, token = null) {
+  return request('POST', path, { body, token })
+}
+
+export async function apiPut(path, body = {}, token = null) {
+  return request('PUT', path, { body, token })
 }
 
 export function storageUrl(path) {
