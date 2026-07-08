@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Leaf, List, X } from '@phosphor-icons/react'
 
-const SECTION_LINKS = [
-  { href: '/#dampak', label: 'Dampak' },
-  { href: '/#kalkulator', label: 'Kalkulator Karbon' },
-  { href: '/#program', label: 'Program' },
-  { href: '/#sertifikasi', label: 'Kemitraan' },
+const NAV_LINKS = [
+  { href: '/#profil-dusun', label: 'Profil' },
+  { href: '/#peta', label: 'Peta' },
+  { href: '/#katalog-umkm', label: 'UMKM' },
+  { href: '/#bank-sampah', label: 'Bank Sampah' },
 ]
 
 export default function Navbar() {
@@ -23,8 +23,8 @@ export default function Navbar() {
         </Link>
 
         <ul className="hidden items-center gap-8 md:flex">
-          {SECTION_LINKS.map((link) => (
-            <li key={link.href}>
+          {NAV_LINKS.map((link) => (
+            <li key={link.label}>
               <a
                 href={link.href}
                 className="text-sm font-medium text-bark/80 transition-colors duration-200 hover:text-primary"
@@ -33,22 +33,7 @@ export default function Navbar() {
               </a>
             </li>
           ))}
-          <li>
-            <Link
-              to="/portal"
-              className="text-sm font-medium text-bark/80 transition-colors duration-200 hover:text-primary"
-            >
-              Portal Desa
-            </Link>
-          </li>
         </ul>
-
-        <Link
-          to="/portal"
-          className="hidden rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-primary-dark md:inline-block"
-        >
-          Buka Portal Desa
-        </Link>
 
         <button
           type="button"
@@ -64,8 +49,8 @@ export default function Navbar() {
 
       {open && (
         <ul id="mobile-menu" className="flex flex-col gap-1 border-t border-border/70 px-4 py-3 md:hidden">
-          {SECTION_LINKS.map((link) => (
-            <li key={link.href}>
+          {NAV_LINKS.map((link) => (
+            <li key={link.label}>
               <a
                 href={link.href}
                 onClick={() => setOpen(false)}
@@ -75,15 +60,6 @@ export default function Navbar() {
               </a>
             </li>
           ))}
-          <li>
-            <Link
-              to="/portal"
-              onClick={() => setOpen(false)}
-              className="block rounded-lg px-3 py-2.5 text-sm font-medium text-primary-dark hover:bg-moss"
-            >
-              Portal Desa
-            </Link>
-          </li>
         </ul>
       )}
     </header>

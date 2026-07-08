@@ -37,6 +37,29 @@ export async function apiPut(path, body = {}, token = null) {
   return request('PUT', path, { body, token })
 }
 
+export async function apiDelete(path, token = null) {
+  return request('DELETE', path, { token })
+}
+
+// Upload multipart (mis. foto UMKM). Laravel tidak mengisi $_FILES untuk method
+// PUT, jadi update dengan file dikirim sebagai POST + field _method=PUT (method
+// spoofing bawaan Laravel).
+export async function apiUpload(path, formData, token = null, { isUpdate = false } = {}) {
+  if (isUpdate) formData.append('_method', 'PUT')
+
+  const headers = { Accept: 'application/json' }
+  if (token) headers['Authorization'] = `Bearer ${token}`
+
+  const res = await fetch(`${API_BASE_URL}${path}`, { method: 'POST', headers, body: formData })
+  const json = await res.json().catch(() => null)
+
+  if (!res.ok || !json?.success) {
+    throw new Error(json?.message ?? `Gagal mengirim ${path}`)
+  }
+
+  return { data: json.data, meta: json.meta ?? null, message: json.message }
+}
+
 export function storageUrl(path) {
   if (!path) return null
   const origin = API_BASE_URL.replace(/\/api\/v1\/?$/, '')

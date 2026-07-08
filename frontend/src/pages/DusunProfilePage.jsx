@@ -24,7 +24,7 @@ export default function DusunProfilePage() {
           <p className="mt-2 text-bark/75">
             Profil hanya tersedia untuk Dusun Karangasem dan Dusun Tegalwungu.
           </p>
-          <Link to="/portal" className="mt-6 inline-block font-semibold text-primary hover:text-primary-dark">
+          <Link to="/" className="mt-6 inline-block font-semibold text-primary hover:text-primary-dark">
             Kembali ke Portal
           </Link>
         </div>
@@ -33,7 +33,7 @@ export default function DusunProfilePage() {
   }
 
   return (
-    <PortalLayout crumbs={[{ label: 'Profil Dusun', to: '/portal#profil-dusun' }, { label: DUSUN_LABEL[dusun] }]}>
+    <PortalLayout crumbs={[{ label: 'Profil Dusun', to: '/#profil-dusun' }, { label: DUSUN_LABEL[dusun] }]}>
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
         <span className="inline-flex items-center gap-2 rounded-full bg-moss px-4 py-1.5 text-sm font-medium text-primary-dark">
           <Buildings size={18} weight="bold" />

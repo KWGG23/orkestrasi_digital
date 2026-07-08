@@ -10,7 +10,7 @@ export default function PortalLayout({ crumbs = [], children }) {
       <main>
         <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6">
           <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 text-sm text-muted">
-            <Link to="/portal" className="flex items-center gap-1 hover:text-primary">
+            <Link to="/" className="flex items-center gap-1 hover:text-primary">
               <House size={15} />
               Portal
             </Link>
