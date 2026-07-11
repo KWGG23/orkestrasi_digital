@@ -73,5 +73,9 @@ Route::prefix('v1')->group(function () {
         Route::post('umkm', [UmkmController::class, 'store']);
         Route::put('umkm/{id}', [UmkmController::class, 'update']);
         Route::delete('umkm/{id}', [UmkmController::class, 'destroy']);
+        Route::put('profil/{dusun}', [ProfilDusunController::class, 'update']);
+        Route::post('pengumuman', [PengumumanController::class, 'store']);
+        Route::put('pengumuman/{id}', [PengumumanController::class, 'update']);
+        Route::delete('pengumuman/{id}', [PengumumanController::class, 'destroy']);
     });
 });
