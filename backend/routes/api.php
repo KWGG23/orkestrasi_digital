@@ -6,6 +6,7 @@ use App\Http\Controllers\BankSampah\LaporanController;
 use App\Http\Controllers\BankSampah\NasabahController;
 use App\Http\Controllers\BankSampah\SetoranController;
 use App\Http\Controllers\BankSampah\TabunganController;
+use App\Http\Controllers\Portal\KegiatanKknController;
 use App\Http\Controllers\Portal\LayerController;
 use App\Http\Controllers\Portal\PengumumanController;
 use App\Http\Controllers\Portal\ProfilDusunController;
@@ -62,6 +63,10 @@ Route::prefix('v1')->group(function () {
     // Profil dusun & pengumuman
     Route::get('profil/{dusun}', [ProfilDusunController::class, 'show']);
     Route::get('pengumuman', [PengumumanController::class, 'index']);
+
+    // Kegiatan KKN — dokumentasi per tahun, publik
+    Route::get('kegiatan-kkn', [KegiatanKknController::class, 'index']);
+    Route::get('kegiatan-kkn/{tahun}', [KegiatanKknController::class, 'show']);
 
     // Admin-only Portal (Sanctum)
     Route::middleware('auth:sanctum')->group(function () {

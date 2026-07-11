@@ -6,6 +6,7 @@ const NAV_LINKS = [
   { href: "/#profil-dusun", label: "Profil" },
   { href: "/#peta", label: "Peta" },
   { href: "/#katalog-umkm", label: "UMKM" },
+  { href: "/#kegiatan-kkn", label: "Kegiatan KKN" },
   { href: "/#bank-sampah", label: "Bank Sampah" },
 ];
 

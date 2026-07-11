@@ -3,6 +3,7 @@ import PortalHubPage from './pages/PortalHubPage.jsx'
 import DusunProfilePage from './pages/DusunProfilePage.jsx'
 import UmkmCatalogPage from './pages/UmkmCatalogPage.jsx'
 import UmkmDetailPage from './pages/UmkmDetailPage.jsx'
+import KegiatanKknDetailPage from './pages/KegiatanKknDetailPage.jsx'
 import PetaAdministratifPage from './pages/PetaAdministratifPage.jsx'
 import PetaBencanaPage from './pages/PetaBencanaPage.jsx'
 import BankSampahPortalPage from './pages/BankSampahPortalPage.jsx'
@@ -21,6 +22,7 @@ function App() {
       <Route path="/portal/profil/:dusun" element={<DusunProfilePage />} />
       <Route path="/portal/umkm" element={<UmkmCatalogPage />} />
       <Route path="/portal/umkm/:id" element={<UmkmDetailPage />} />
+      <Route path="/portal/kegiatan/:tahun" element={<KegiatanKknDetailPage />} />
       <Route path="/portal/peta/administratif" element={<PetaAdministratifPage />} />
       <Route path="/portal/peta/bencana" element={<PetaBencanaPage />} />
       <Route path="/portal/bank-sampah" element={<BankSampahPortalPage />} />

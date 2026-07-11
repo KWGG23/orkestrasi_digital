@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
             JenisSampahSeeder::class,
             AdminSeeder::class,
             DummyNasabahSeeder::class,
+            KegiatanKknSeeder::class,
         ]);
     }
 }
