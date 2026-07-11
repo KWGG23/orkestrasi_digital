@@ -26,7 +26,7 @@ export default function MapPreviewGrid() {
           <FeatureCard
             icon={MapPin}
             eyebrow="Peta Administratif"
-            title="Batas Dusun Karangasem & Tegalwungu"
+            title="Batas Dusun Karangasem & Blongkeng"
             description="Lihat batas wilayah kedua dusun beserta fasilitas umum di sekitarnya."
             to="/portal/peta/administratif"
             badge={badgeFor(admin)}

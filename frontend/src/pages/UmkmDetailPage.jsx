@@ -23,7 +23,7 @@ const KATEGORI_LABEL = {
 
 const DUSUN_LABEL = {
   karangasem: 'Dusun Karangasem',
-  tegalwungu: 'Dusun Blongkeng',
+  blongkeng: 'Dusun Blongkeng',
 }
 
 function Chip({ children }) {

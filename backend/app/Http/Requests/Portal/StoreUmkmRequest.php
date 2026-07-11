@@ -20,7 +20,7 @@ class StoreUmkmRequest extends FormRequest
         return [
             'nama_usaha'        => 'required|string|max:255',
             'nama_pemilik'      => 'required|string|max:255',
-            'dusun'             => 'required|in:karangasem,tegalwungu',
+            'dusun'             => 'required|in:karangasem,blongkeng',
             'kategori'          => 'required|in:kuliner,kerajinan,pertanian,jasa,perdagangan',
             'deskripsi'         => 'nullable|string',
             'produk_utama'      => 'nullable|array',

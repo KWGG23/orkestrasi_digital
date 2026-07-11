@@ -1,14 +1,14 @@
 # Orkestrasi Digitalisasi Desa — KKN
 
 Proyek KKN (Kuliah Kerja Nyata) untuk digitalisasi layanan desa di **Dusun Karangasem**
-dan **Dusun Tegalwungu**, Kelurahan Muntilan, Kecamatan Muntilan, Kabupaten Magelang.
+dan **Dusun Blongkeng**, Kelurahan Muntilan, Kecamatan Muntilan, Kabupaten Magelang.
 
 Terdiri dari dua sub-sistem yang berbagi satu backend:
 
 | Sub-sistem | Fungsi | Cakupan Wilayah |
 |---|---|---|
 | **Bank Sampah Digital** | Pencatatan setoran sampah, tabungan warga, laporan harian/bulanan | Dusun Karangasem saja (mitra: BSI / Bank Sampah Indonesia — Dipa Nirmala) |
-| **Portal Desa Digital** | Peta interaktif, katalog UMKM, profil dusun, pengumuman | Karangasem + Tegalwungu |
+| **Portal Desa Digital** | Peta interaktif, katalog UMKM, profil dusun, pengumuman | Karangasem + Blongkeng |
 
 ---
 

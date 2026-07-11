@@ -7,7 +7,7 @@ import { storageUrl } from '../../lib/api.js'
 
 const DUSUN_OPTIONS = [
   { value: 'karangasem', label: 'Karangasem' },
-  { value: 'tegalwungu', label: 'Tegalwungu' },
+  { value: 'blongkeng', label: 'Blongkeng' },
 ]
 
 const KATEGORI_OPTIONS = [

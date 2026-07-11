@@ -12,8 +12,8 @@ class ProfilDusunController extends Controller
 
     public function show(string $dusun)
     {
-        if (! in_array($dusun, ['karangasem', 'tegalwungu'])) {
-            return $this->error('Dusun tidak valid. Gunakan karangasem atau tegalwungu.', 404);
+        if (! in_array($dusun, ['karangasem', 'blongkeng'])) {
+            return $this->error('Dusun tidak valid. Gunakan karangasem atau blongkeng.', 404);
         }
 
         $profil = ProfilDusun::where('dusun', $dusun)->first();

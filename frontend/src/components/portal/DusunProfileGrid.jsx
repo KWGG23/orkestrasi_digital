@@ -22,8 +22,7 @@ function badgeFor(query) {
 export default function DusunProfileGrid() {
   const karangasem = useProfilDusun("karangasem");
 
-  // Untuk sementara tetap memakai slug backend lama
-  const blongkeng = useProfilDusun("tegalwungu");
+  const blongkeng = useProfilDusun("blongkeng");
 
   const [activeSlide, setActiveSlide] = useState(0);
 
@@ -36,8 +35,7 @@ export default function DusunProfileGrid() {
       badge: badgeFor(karangasem),
     },
     {
-      // Slug sementara tetap tegalwungu agar route lama tetap berjalan
-      slug: "tegalwungu",
+      slug: "blongkeng",
       title: "Dusun Blongkeng",
       description:
         "Mitra Portal Desa untuk pemetaan wilayah dan pengembangan potensi UMKM lokal.",

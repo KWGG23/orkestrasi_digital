@@ -6,7 +6,7 @@ export default function PetaAdministratifPage() {
     <MapPageLayout
       crumbLabel="Peta Administratif"
       icon={MapPin}
-      title="Batas Wilayah Karangasem & Tegalwungu"
+      title="Batas Wilayah Karangasem & Blongkeng"
       description="Menggabungkan batas administratif kedua dusun dalam satu lapisan peta interaktif."
       layer="admin"
       layerColor="#15803d"

@@ -1,4 +1,4 @@
-# Frontend — Desa Digital Karangasem & Tegalwungu
+# Frontend — Desa Digital Karangasem & Blongkeng
 
 React + Vite frontend untuk proyek KKN Digitalisasi Desa. Baca juga `../CLAUDE.md` di root
 repo untuk konteks proyek penuh (skema database, kontrak API, pembagian tanggung jawab).
@@ -10,12 +10,12 @@ melanjutkannya.
 
 ## Ringkasan Proyek
 
-Ada dua sub-sistem, dua dusun (**Karangasem** dan **Tegalwungu**, Kelurahan Muntilan,
+Ada dua sub-sistem, dua dusun (**Karangasem** dan **Blongkeng**, Kelurahan Muntilan,
 Kabupaten Magelang):
 
 - **Bank Sampah Digital** — khusus Dusun Karangasem. Pencatatan setoran sampah, tabungan
   warga, laporan.
-- **Portal Desa Digital** — Karangasem + Tegalwungu. Profil dusun, katalog UMKM, peta
+- **Portal Desa Digital** — Karangasem + Blongkeng. Profil dusun, katalog UMKM, peta
   administratif & kerentanan bencana.
 
 Backend Laravel sudah menyediakan seluruh API (lihat `../backend/routes/api.php` dan bagian
@@ -125,7 +125,7 @@ src/
 |---|---|---|
 | `/` | `pages/LandingPage.jsx` | Marketing/landing eco-sustainability, kalkulator karbon |
 | `/portal` | `pages/PortalHubPage.jsx` | Hub — preview semua fitur di bawah ini |
-| `/portal/profil/:dusun` | `pages/DusunProfilePage.jsx` | `GET /profil/{karangasem\|tegalwungu}` |
+| `/portal/profil/:dusun` | `pages/DusunProfilePage.jsx` | `GET /profil/{karangasem\|blongkeng}` |
 | `/portal/umkm` | `pages/UmkmCatalogPage.jsx` | `GET /umkm` |
 | `/portal/peta/administratif` | `pages/PetaAdministratifPage.jsx` | `GET /layers/admin` |
 | `/portal/peta/bencana` | `pages/PetaBencanaPage.jsx` | `GET /layers/bencana` |
@@ -225,11 +225,11 @@ paling kelihatan gap-nya:
   kecuali beberapa endpoint tertentu (update harga, laporan, CRUD UMKM). Kalau nanti
   dibuatkan halaman input setoran/nasabah baru, diskusikan dulu ke yang pegang backend
   apakah endpoint itu perlu digeser ke grup `auth:sanctum` supaya tidak publik.
-- **Nama dusun di database**: enum `karangasem` / `tegalwungu` (huruf kecil, tanpa
-  spasi). Kalau nulis query param atau path (`?dusun=karangasem`, `/profil/tegalwungu`),
-  pastikan pakai slug ini. Nama lama "Kaweron" / "Dusun Mitra" sudah di-rename total dan
-  tidak dipakai lagi di kode manapun — kalau nemu sisa referensi itu di suatu tempat,
-  berarti ada yang belum ke-update.
+- **Nama dusun di database**: enum `karangasem` / `blongkeng` (huruf kecil, tanpa
+  spasi). Kalau nulis query param atau path (`?dusun=karangasem`, `/profil/blongkeng`),
+  pastikan pakai slug ini. Nama lama "Kaweron" / "Dusun Mitra" / "Tegalwungu" sudah
+  di-rename total dan tidak dipakai lagi di kode manapun — kalau nemu sisa referensi itu
+  di suatu tempat, berarti ada yang belum ke-update.
 - **`postcss`/`autoprefixer` sudah dihapus dari `package.json`** — tidak dibutuhkan
   karena pakai `@tailwindcss/vite`. Kalau `npm install` tiba-tiba nambahin lagi
   (misal gara-gara dependency lain), itu bukan regresi yang perlu dikhawatirkan.

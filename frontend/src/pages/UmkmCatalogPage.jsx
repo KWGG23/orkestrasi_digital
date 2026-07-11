@@ -7,7 +7,7 @@ import UmkmCard from '../components/umkm/UmkmCard.jsx'
 const DUSUN_OPTIONS = [
   { value: '', label: 'Semua dusun' },
   { value: 'karangasem', label: 'Karangasem' },
-  { value: 'tegalwungu', label: 'Tegalwungu' },
+  { value: 'blongkeng', label: 'Blongkeng' },
 ]
 
 const KATEGORI_OPTIONS = [
@@ -34,7 +34,7 @@ export default function UmkmCatalogPage() {
           Katalog UMKM
         </h1>
         <p className="mt-2 text-bark/75">
-          {data ? `${data.total} usaha terdaftar` : 'Memuat…'} di Dusun Karangasem & Tegalwungu.
+          {data ? `${data.total} usaha terdaftar` : 'Memuat…'} di Dusun Karangasem & Blongkeng.
         </p>
 
         <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-border bg-white p-4 sm:flex-row sm:items-center">

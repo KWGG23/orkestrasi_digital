@@ -7,7 +7,7 @@ import ProfilContent from "../components/profil/ProfilContent.jsx";
 
 const DUSUN_LABEL = {
   karangasem: "Dusun Karangasem",
-  tegalwungu: "Dusun Blongkeng",
+  blongkeng: "Dusun Blongkeng",
 };
 
 export default function DusunProfilePage() {

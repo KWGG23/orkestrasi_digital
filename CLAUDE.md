@@ -11,9 +11,9 @@ Proyek KKN digitalisasi yang terdiri dari **dua sub-sistem**:
 | Sub-sistem | Scope | Kolaborasi |
 |---|---|---|
 | **Bank Sampah Digital** | Pencatatan setoran, tabungan, laporan | 1 dusun (Dusun Karangasem) |
-| **Portal Desa Digital** | Peta interaktif, katalog UMKM, profil dusun | 2 dusun (Karangasem + Tegalwungu) |
+| **Portal Desa Digital** | Peta interaktif, katalog UMKM, profil dusun | 2 dusun (Karangasem + Blongkeng) |
 
-**Lokasi:** Dusun Karangasem & Dusun Tegalwungu, Kelurahan Muntilan, Kecamatan Muntilan, Kabupaten Magelang  
+**Lokasi:** Dusun Karangasem & Dusun Blongkeng, Kelurahan Muntilan, Kecamatan Muntilan, Kabupaten Magelang  
 **Mitra Bank Sampah:** BSI (Bank Sampah Indonesia) — Dipa Nirmala
 
 ---
@@ -55,7 +55,7 @@ Proyek KKN digitalisasi yang terdiri dari **dua sub-sistem**:
 │
 ├── geojson/          # Data spasial statis (shared)
 │   ├── admin-karangasem.geojson
-│   ├── admin-tegalwungu.geojson
+│   ├── admin-blongkeng.geojson
 │   └── bencana.geojson
 │
 └── CLAUDE.md
@@ -189,7 +189,7 @@ transaksi_tabungans
 ```sql
 -- Katalog UMKM (2 dusun)
 umkms
-  id, nama_usaha, nama_pemilik, dusun ENUM('karangasem','tegalwungu'),
+  id, nama_usaha, nama_pemilik, dusun ENUM('karangasem','blongkeng'),
   kategori ENUM('kuliner','kerajinan','pertanian','jasa','perdagangan'),
   deskripsi, produk_utama (JSON), kisaran_harga,
   no_wa, instagram, jam_buka, hari_buka,
@@ -267,7 +267,7 @@ GET    /api/v1/layers/admin         # GeoJSON batas dusun
 GET    /api/v1/layers/bencana       # GeoJSON kerentanan tanah
 GET    /api/v1/layers/fasilitas     # GeoJSON fasilitas umum
 
-GET    /api/v1/profil/{dusun}       # profil dusun (karangasem|tegalwungu)
+GET    /api/v1/profil/{dusun}       # profil dusun (karangasem|blongkeng)
 GET    /api/v1/pengumuman           # list pengumuman aktif
 ```
 

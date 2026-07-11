@@ -20,7 +20,7 @@ class UpdateUmkmRequest extends FormRequest
         return [
             'nama_usaha'        => 'sometimes|string|max:255',
             'nama_pemilik'      => 'sometimes|string|max:255',
-            'dusun'             => 'sometimes|in:karangasem,tegalwungu',
+            'dusun'             => 'sometimes|in:karangasem,blongkeng',
             'kategori'          => 'sometimes|in:kuliner,kerajinan,pertanian,jasa,perdagangan',
             'deskripsi'         => 'nullable|string',
             'produk_utama'      => 'nullable|array',

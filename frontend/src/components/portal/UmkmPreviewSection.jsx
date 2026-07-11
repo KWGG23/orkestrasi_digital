@@ -14,7 +14,7 @@ export default function UmkmPreviewSection() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <SectionHeading
             eyebrow="Katalog UMKM"
-            title="Usaha warga Karangasem & Tegalwungu"
+            title="Usaha warga Karangasem & Blongkeng"
             description="Ditemukan lewat peta portal, lengkap dengan kontak WhatsApp langsung ke pemilik."
           />
           <Link

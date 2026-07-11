@@ -386,7 +386,7 @@
                     {
                       "key": "dusun",
                       "value": "karangasem",
-                      "description": "Filter: karangasem | tegalwungu (opsional)"
+                      "description": "Filter: karangasem | blongkeng (opsional)"
                     },
                     {
                       "key": "kategori",
@@ -506,7 +506,7 @@
           "name": "Layer GeoJSON",
           "item": [
             {
-              "name": "Batas Dusun (admin-karangasem + admin-tegalwungu)",
+              "name": "Batas Dusun (admin-karangasem + admin-blongkeng)",
               "request": {
                 "auth": { "type": "noauth" },
                 "method": "GET",
@@ -516,7 +516,7 @@
                   "host": ["{{base_url}}"],
                   "path": ["layers", "admin"]
                 },
-                "description": "GeoJSON batas administratif 2 dusun (karangasem + tegalwungu) digabung jadi satu FeatureCollection. Load langsung ke `L.geoJSON()` Leaflet."
+                "description": "GeoJSON batas administratif 2 dusun (karangasem + blongkeng) digabung jadi satu FeatureCollection. Load langsung ke `L.geoJSON()` Leaflet."
               }
             },
             {
@@ -563,7 +563,7 @@
                   "host": ["{{base_url}}"],
                   "path": ["profil", "karangasem"]
                 },
-                "description": "Profil dusun beserta konten JSON (sejarah, demografi, potensi, dll). Ganti `karangasem` dengan `tegalwungu` untuk dusun satunya. Response `data.konten` berisi struktur bebas yang bisa diatur admin."
+                "description": "Profil dusun beserta konten JSON (sejarah, demografi, potensi, dll). Ganti `karangasem` dengan `blongkeng` untuk dusun satunya. Response `data.konten` berisi struktur bebas yang bisa diatur admin."
               }
             }
           ]

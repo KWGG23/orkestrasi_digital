@@ -9,7 +9,7 @@ class LayerController extends Controller
 {
     public function admin()
     {
-        return $this->serveGeojson('admin-karangasem.geojson', 'admin-tegalwungu.geojson');
+        return $this->serveGeojson('admin-karangasem.geojson', 'admin-blongkeng.geojson');
     }
 
     public function bencana()

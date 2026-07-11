@@ -12,7 +12,7 @@ const KATEGORI_LABEL = {
 
 const DUSUN_LABEL = {
   karangasem: 'Karangasem',
-  tegalwungu: 'Tegalwungu',
+  blongkeng: 'Blongkeng',
 }
 
 export default function UmkmCard({ umkm }) {
