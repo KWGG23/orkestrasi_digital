@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Pengumuman extends Model
 {
+    use HasFactory;
+
     protected $table = 'pengumumans';
 
     protected $fillable = [
@@ -17,6 +20,6 @@ class Pengumuman extends Model
 
     protected $casts = [
         'tanggal_publish' => 'date',
-        'aktif'           => 'boolean',
+        'aktif' => 'boolean',
     ];
 }

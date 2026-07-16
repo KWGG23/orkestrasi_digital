@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Umkm extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'nama_usaha',
         'nama_pemilik',
@@ -29,13 +32,13 @@ class Umkm extends Model
     ];
 
     protected $casts = [
-        'produk_utama'    => 'array',
-        'metode_bayar'    => 'array',
+        'produk_utama' => 'array',
+        'metode_bayar' => 'array',
         'platform_online' => 'array',
-        'foto_produk'     => 'array',
-        'punya_nib'       => 'boolean',
-        'aktif'           => 'boolean',
-        'lat'             => 'decimal:8',
-        'lng'             => 'decimal:8',
+        'foto_produk' => 'array',
+        'punya_nib' => 'boolean',
+        'aktif' => 'boolean',
+        'lat' => 'decimal:8',
+        'lng' => 'decimal:8',
     ];
 }

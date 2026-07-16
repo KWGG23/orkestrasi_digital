@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class JenisSampah extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'nama',
         'kategori',
@@ -16,7 +19,7 @@ class JenisSampah extends Model
 
     protected $casts = [
         'harga_per_satuan' => 'decimal:2',
-        'aktif'            => 'boolean',
+        'aktif' => 'boolean',
     ];
 
     public function detailSetorans()

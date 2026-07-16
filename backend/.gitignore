@@ -12,6 +12,10 @@
 /.vscode
 /.zed
 /auth.json
+/coverage-report
+/coverage.xml
+/newman-report
+/zap-report
 /node_modules
 /public/build
 /public/hot
