@@ -19,7 +19,7 @@ class NasabahController extends Controller
         if ($q = $request->q) {
             $query->where(function ($query) use ($q) {
                 $query->where('nama', 'like', "%{$q}%")
-                      ->orWhere('no_anggota', 'like', "%{$q}%");
+                    ->orWhere('no_anggota', 'like', "%{$q}%");
             });
         }
 
@@ -30,10 +30,10 @@ class NasabahController extends Controller
             'OK',
             200,
             [
-                'total'     => $nasabah->total(),
-                'page'      => $nasabah->currentPage(),
+                'total' => $nasabah->total(),
+                'page' => $nasabah->currentPage(),
                 'last_page' => $nasabah->lastPage(),
-                'per_page'  => $nasabah->perPage(),
+                'per_page' => $nasabah->perPage(),
             ]
         );
     }
@@ -42,7 +42,7 @@ class NasabahController extends Controller
     {
         $nasabah = Nasabah::create($request->validated());
 
-        return $this->success($nasabah, 'Nasabah berhasil ditambahkan', 201);
+        return $this->success($nasabah->fresh(), 'Nasabah berhasil ditambahkan', 201);
     }
 
     public function show(string $id)

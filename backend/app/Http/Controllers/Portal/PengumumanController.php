@@ -25,7 +25,7 @@ class PengumumanController extends Controller
     {
         $pengumuman = Pengumuman::create($request->validated());
 
-        return $this->success($pengumuman, 'Pengumuman berhasil ditambahkan', 201);
+        return $this->success($pengumuman->fresh(), 'Pengumuman berhasil ditambahkan', 201);
     }
 
     public function update(UpdatePengumumanRequest $request, string $id)

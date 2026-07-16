@@ -30,8 +30,8 @@ class UmkmController extends Controller
         if ($q = $request->q) {
             $query->where(function ($query) use ($q) {
                 $query->where('nama_usaha', 'like', "%{$q}%")
-                      ->orWhere('nama_pemilik', 'like', "%{$q}%")
-                      ->orWhere('deskripsi', 'like', "%{$q}%");
+                    ->orWhere('nama_pemilik', 'like', "%{$q}%")
+                    ->orWhere('deskripsi', 'like', "%{$q}%");
             });
         }
 
@@ -42,8 +42,8 @@ class UmkmController extends Controller
             'OK',
             200,
             [
-                'total'     => $umkm->total(),
-                'page'      => $umkm->currentPage(),
+                'total' => $umkm->total(),
+                'page' => $umkm->currentPage(),
                 'last_page' => $umkm->lastPage(),
             ]
         );
@@ -73,7 +73,7 @@ class UmkmController extends Controller
 
         $umkm = Umkm::create($data);
 
-        return $this->success($umkm, 'UMKM berhasil ditambahkan', 201);
+        return $this->success($umkm->fresh(), 'UMKM berhasil ditambahkan', 201);
     }
 
     public function update(UpdateUmkmRequest $request, string $id)
@@ -117,8 +117,8 @@ class UmkmController extends Controller
 
     private function simpanFoto($file): string
     {
-        $filename = uniqid('umkm_') . '.' . $file->getClientOriginalExtension();
-        $path = storage_path('app/public/umkm/' . $filename);
+        $filename = uniqid('umkm_').'.'.$file->getClientOriginalExtension();
+        $path = storage_path('app/public/umkm/'.$filename);
 
         $image = Image::read($file);
 
@@ -128,7 +128,7 @@ class UmkmController extends Controller
 
         $image->save($path);
 
-        return 'umkm/' . $filename;
+        return 'umkm/'.$filename;
     }
 
     private function hapusFoto(?string $path): void
