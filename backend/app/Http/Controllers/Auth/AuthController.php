@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -14,7 +15,11 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        if (! Auth::attempt($request->only('email', 'password'))) {
+        // Auth::once() memverifikasi kredensial tanpa membuat sesi — backend ini
+        // API-only (lihat bootstrap/app.php), murni token Bearer lewat Sanctum.
+        // Auth::attempt() akan diam-diam login lewat sesi juga, yang bikin guard
+        // Sanctum (Guard::__invoke()) mengutamakan sesi itu di atas token manapun.
+        if (! Auth::once($request->only('email', 'password'))) {
             return $this->error('Email atau password salah.', 401);
         }
 
@@ -26,15 +31,22 @@ class AuthController extends Controller
         $token = $user->createToken('admin-token')->plainTextToken;
 
         return $this->success([
-            'user'       => $user->only(['id', 'name', 'email']),
-            'token'      => $token,
+            'user' => $user->only(['id', 'name', 'email']),
+            'token' => $token,
             'token_type' => 'Bearer',
         ], 'Login berhasil');
     }
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $token = $request->user()->currentAccessToken();
+
+        // Sanctum bisa mengembalikan TransientToken (sesi, bukan token asli) kalau
+        // request ini kebetulan terautentikasi lewat guard sesi, bukan Bearer token.
+        // TransientToken tidak punya baris DB untuk dihapus.
+        if ($token instanceof PersonalAccessToken) {
+            $token->delete();
+        }
 
         return $this->success(null, 'Logout berhasil');
     }
