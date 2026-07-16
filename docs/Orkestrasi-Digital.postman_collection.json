@@ -1,579 +1,1737 @@
 {
-  "info": {
-    "_postman_id": "orkestrasi-digital-api-v1",
-    "name": "Orkestrasi Digital",
-    "description": "API backend untuk sistem Bank Sampah Digital dan Portal Dusun Digital.\n\n**Base URL:** `http://localhost:8000/api/v1`\n\n**Auth:** Endpoint bertanda 🔒 membutuhkan Bearer token. Login dulu via `POST /auth/login`, token akan tersimpan otomatis ke variable `{{token}}`.\n\n**Response format:**\n```json\n{ \"success\": true, \"message\": \"OK\", \"data\": {...}, \"meta\": {...} }\n```\n\n**Kontak BE:** vincentius.erwan23@gmail.com",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "variable": [
-    {
-      "key": "base_url",
-      "value": "http://localhost:8000/api/v1",
-      "type": "string",
-      "description": "Ganti ke URL production saat deploy"
-    },
-    {
-      "key": "token",
-      "value": "",
-      "type": "string",
-      "description": "Terisi otomatis setelah login berhasil"
-    }
-  ],
-  "auth": {
-    "type": "bearer",
-    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
-  },
-  "item": [
-    {
-      "name": "🔐 Auth",
-      "item": [
-        {
-          "name": "Login",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200) {",
-                  "    const json = pm.response.json();",
-                  "    pm.collectionVariables.set('token', json.data.token);",
-                  "    console.log('✅ Token tersimpan:', json.data.token);",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "auth": { "type": "noauth" },
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@desadijital.id\",\n  \"password\": \"password\"\n}",
-              "options": { "raw": { "language": "json" } }
-            },
-            "url": {
-              "raw": "{{base_url}}/auth/login",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "login"]
-            },
-            "description": "Login admin. Token disimpan otomatis ke `{{token}}` via test script."
-          }
-        },
-        {
-          "name": "Get Current User (me) 🔒",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/auth/me",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "me"]
-            },
-            "description": "Cek identitas admin yang sedang login."
-          }
-        },
-        {
-          "name": "Logout 🔒",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.collectionVariables.set('token', '');",
-                  "console.log('Token dihapus.');"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/auth/logout",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "logout"]
-            },
-            "description": "Revoke token aktif. Token dihapus dari variable otomatis."
-          }
-        }
-      ]
-    },
-    {
-      "name": "🗑️ Bank Sampah",
-      "item": [
-        {
-          "name": "Jenis Sampah",
-          "item": [
-            {
-              "name": "List Jenis Sampah",
-              "request": {
-                "auth": { "type": "noauth" },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/jenis-sampah",
-                  "host": ["{{base_url}}"],
-                  "path": ["jenis-sampah"]
-                },
-                "description": "List semua jenis sampah yang aktif, diurutkan per kategori. Dipakai FE untuk populate dropdown saat input setoran."
-              }
-            },
-            {
-              "name": "Update Harga Jenis Sampah 🔒",
-              "request": {
-                "method": "PUT",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"harga_per_satuan\": 3500,\n  \"aktif\": true\n}",
-                  "options": { "raw": { "language": "json" } }
-                },
-                "url": {
-                  "raw": "{{base_url}}/jenis-sampah/1",
-                  "host": ["{{base_url}}"],
-                  "path": ["jenis-sampah", "1"]
-                },
-                "description": "Update harga beli per satuan. Harga baru akan berlaku untuk setoran berikutnya (harga lama tersimpan di detail_setoran)."
-              }
-            }
-          ]
-        },
-        {
-          "name": "Nasabah",
-          "item": [
-            {
-              "name": "List Nasabah",
-              "request": {
-                "auth": { "type": "noauth" },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/nasabah?q=siti",
-                  "host": ["{{base_url}}"],
-                  "path": ["nasabah"],
-                  "query": [
-                    {
-                      "key": "q",
-                      "value": "siti",
-                      "description": "Search by nama atau no_anggota (opsional)"
-                    },
-                    {
-                      "key": "page",
-                      "value": "1",
-                      "description": "Halaman (default: 1, per page: 20)",
-                      "disabled": true
-                    }
-                  ]
-                },
-                "description": "List nasabah dengan pagination. Search menggunakan query param `?q=`."
-              }
-            },
-            {
-              "name": "Tambah Nasabah",
-              "request": {
-                "auth": { "type": "noauth" },
-                "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"nama\": \"Budi Santoso\",\n  \"no_anggota\": \"KRA-011\",\n  \"alamat\": \"Dusun Karangasem, Muntilan\",\n  \"rt\": \"01\",\n  \"rw\": \"02\",\n  \"no_hp\": \"081234567899\"\n}",
-                  "options": { "raw": { "language": "json" } }
-                },
-                "url": {
-                  "raw": "{{base_url}}/nasabah",
-                  "host": ["{{base_url}}"],
-                  "path": ["nasabah"]
-                },
-                "description": "`no_anggota` harus unik. Format saran: `KRA-XXX` untuk Karangasem."
-              }
-            },
-            {
-              "name": "Detail Nasabah",
-              "request": {
-                "auth": { "type": "noauth" },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/nasabah/1",
-                  "host": ["{{base_url}}"],
-                  "path": ["nasabah", "1"]
-                },
-                "description": "Return detail nasabah beserta 10 setoran terakhir (dengan detail item tiap setoran)."
-              }
-            }
-          ]
-        },
-        {
-          "name": "Setoran",
-          "item": [
-            {
-              "name": "Buat Setoran (Nota)",
-              "request": {
-                "auth": { "type": "noauth" },
-                "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"id_nasabah\": 1,\n  \"tanggal\": \"2026-07-03\",\n  \"metode\": \"tabung\",\n  \"catatan\": \"Setoran rutin minggu ini\",\n  \"items\": [\n    {\n      \"id_jenis_sampah\": 1,\n      \"berat_kg\": 2.5\n    },\n    {\n      \"id_jenis_sampah\": 5,\n      \"berat_kg\": 1.2\n    }\n  ]\n}",
-                  "options": { "raw": { "language": "json" } }
-                },
-                "url": {
-                  "raw": "{{base_url}}/setoran",
-                  "host": ["{{base_url}}"],
-                  "path": ["setoran"]
-                },
-                "description": "Buat nota setoran baru. `no_nota` di-generate otomatis (format: `NOT-YYYYMMDD-XXXX`).\n\n**metode:**\n- `tunai` — uang langsung diberikan ke nasabah\n- `tabung` — masuk tabungan digital\n- `tukar_barang` — ditukar barang\n\nHarga per item diambil dari master `jenis_sampahs` saat transaksi (snapshot harga)."
-              }
-            },
-            {
-              "name": "Detail Setoran",
-              "request": {
-                "auth": { "type": "noauth" },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/setoran/1",
-                  "host": ["{{base_url}}"],
-                  "path": ["setoran", "1"]
-                },
-                "description": "Detail nota beserta semua item sampah, nasabah, dan total."
-              }
-            },
-            {
-              "name": "Download PDF Nota",
-              "request": {
-                "auth": { "type": "noauth" },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/setoran/1/pdf",
-                  "host": ["{{base_url}}"],
-                  "path": ["setoran", "1", "pdf"]
-                },
-                "description": "Download nota PDF ukuran A5. Langsung buka di browser atau arahkan ke `<a href>` untuk print."
-              }
-            }
-          ]
-        },
-        {
-          "name": "Tabungan",
-          "item": [
-            {
-              "name": "Riwayat Tabungan Nasabah",
-              "request": {
-                "auth": { "type": "noauth" },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/tabungan/1?page=1",
-                  "host": ["{{base_url}}"],
-                  "path": ["tabungan", "1"],
-                  "query": [
-                    { "key": "page", "value": "1", "description": "Pagination (20 per halaman)" }
-                  ]
-                },
-                "description": "Riwayat transaksi tabungan nasabah (masuk & keluar), diurutkan terbaru. Response menyertakan saldo saat ini."
-              }
-            },
-            {
-              "name": "Tarik Tabungan",
-              "request": {
-                "auth": { "type": "noauth" },
-                "method": "POST",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"id_nasabah\": 1,\n  \"jumlah\": 10000,\n  \"keterangan\": \"Penarikan untuk kebutuhan pribadi\"\n}",
-                  "options": { "raw": { "language": "json" } }
-                },
-                "url": {
-                  "raw": "{{base_url}}/tabungan/tarik",
-                  "host": ["{{base_url}}"],
-                  "path": ["tabungan", "tarik"]
-                },
-                "description": "Penarikan tabungan. Minimal penarikan Rp 1.000. Akan error 422 jika saldo tidak mencukupi."
-              }
-            }
-          ]
-        },
-        {
-          "name": "Laporan 🔒",
-          "item": [
-            {
-              "name": "Laporan Harian",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/laporan/harian?tanggal=2026-07-03",
-                  "host": ["{{base_url}}"],
-                  "path": ["laporan", "harian"],
-                  "query": [
-                    {
-                      "key": "tanggal",
-                      "value": "2026-07-03",
-                      "description": "Format: YYYY-MM-DD. Default: hari ini"
-                    }
-                  ]
-                },
-                "description": "Rekap setoran satu hari. Response berisi total nota, total harga, breakdown per metode, dan list semua setoran."
-              }
-            },
-            {
-              "name": "Laporan Bulanan",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/laporan/bulanan?bulan=2026-07",
-                  "host": ["{{base_url}}"],
-                  "path": ["laporan", "bulanan"],
-                  "query": [
-                    {
-                      "key": "bulan",
-                      "value": "2026-07",
-                      "description": "Format: YYYY-MM. Default: bulan ini"
-                    }
-                  ]
-                },
-                "description": "Rekap bulanan. Response berisi total, breakdown per metode, dan rekap per hari."
-              }
-            },
-            {
-              "name": "Export Excel",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/laporan/export?bulan=2026-07",
-                  "host": ["{{base_url}}"],
-                  "path": ["laporan", "export"],
-                  "query": [
-                    {
-                      "key": "bulan",
-                      "value": "2026-07",
-                      "description": "Format: YYYY-MM. Default: bulan ini"
-                    }
-                  ]
-                },
-                "description": "Download file `.xlsx` rekap bulanan. Klik 'Send and Download' di Postman."
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "🗺️ Portal Desa",
-      "item": [
-        {
-          "name": "UMKM",
-          "item": [
-            {
-              "name": "List UMKM",
-              "request": {
-                "auth": { "type": "noauth" },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/umkm?dusun=karangasem&kategori=kuliner&q=warung",
-                  "host": ["{{base_url}}"],
-                  "path": ["umkm"],
-                  "query": [
-                    {
-                      "key": "dusun",
-                      "value": "karangasem",
-                      "description": "Filter: karangasem | blongkeng (opsional)"
-                    },
-                    {
-                      "key": "kategori",
-                      "value": "kuliner",
-                      "description": "Filter: kuliner | kerajinan | pertanian | jasa | perdagangan (opsional)"
-                    },
-                    {
-                      "key": "q",
-                      "value": "warung",
-                      "description": "Search nama_usaha / nama_pemilik / deskripsi (opsional)"
-                    },
-                    {
-                      "key": "page",
-                      "value": "1",
-                      "disabled": true
-                    }
-                  ]
-                },
-                "description": "List UMKM aktif dengan filter. Semua param opsional, bisa dikombinasi. Response menyertakan koordinat lat/lng untuk Leaflet marker."
-              }
-            },
-            {
-              "name": "Detail UMKM",
-              "request": {
-                "auth": { "type": "noauth" },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/umkm/1",
-                  "host": ["{{base_url}}"],
-                  "path": ["umkm", "1"]
-                },
-                "description": "Detail lengkap UMKM termasuk produk_utama, foto_produk, platform_online, dll."
-              }
-            },
-            {
-              "name": "Tambah UMKM 🔒",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "formdata",
-                  "formdata": [
-                    { "key": "nama_usaha", "value": "Warung Bu Sari", "type": "text" },
-                    { "key": "nama_pemilik", "value": "Sari Wulandari", "type": "text" },
-                    { "key": "dusun", "value": "karangasem", "type": "text" },
-                    { "key": "kategori", "value": "kuliner", "type": "text" },
-                    { "key": "deskripsi", "value": "Warung makan rumahan, buka setiap hari", "type": "text" },
-                    { "key": "produk_utama[]", "value": "Nasi rames", "type": "text" },
-                    { "key": "produk_utama[]", "value": "Sayur lodeh", "type": "text" },
-                    { "key": "kisaran_harga", "value": "Rp 8.000 - Rp 20.000", "type": "text" },
-                    { "key": "no_wa", "value": "081234567890", "type": "text" },
-                    { "key": "instagram", "value": "warungbusari", "type": "text" },
-                    { "key": "jam_buka", "value": "06.00 - 21.00", "type": "text" },
-                    { "key": "hari_buka", "value": "Senin - Minggu", "type": "text" },
-                    { "key": "metode_bayar[]", "value": "Tunai", "type": "text" },
-                    { "key": "metode_bayar[]", "value": "QRIS", "type": "text" },
-                    { "key": "punya_nib", "value": "0", "type": "text" },
-                    { "key": "lat", "value": "-7.5812345", "type": "text" },
-                    { "key": "lng", "value": "110.2345678", "type": "text" },
-                    {
-                      "key": "foto_usaha",
-                      "type": "file",
-                      "src": "",
-                      "description": "Max 5MB, jpg/jpeg/png/webp. Di-resize otomatis ke max 800px"
-                    },
-                    {
-                      "key": "foto_produk[]",
-                      "type": "file",
-                      "src": "",
-                      "description": "Max 5 foto produk"
-                    }
-                  ]
-                },
-                "url": {
-                  "raw": "{{base_url}}/umkm",
-                  "host": ["{{base_url}}"],
-                  "path": ["umkm"]
-                },
-                "description": "Tambah UMKM baru. Gunakan `multipart/form-data` (bukan JSON) karena ada upload foto. Array dikirim dengan key berakhiran `[]`."
-              }
-            },
-            {
-              "name": "Edit UMKM 🔒",
-              "request": {
-                "method": "PUT",
-                "header": [{ "key": "Content-Type", "value": "application/json" }],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"kisaran_harga\": \"Rp 10.000 - Rp 25.000\",\n  \"jam_buka\": \"07.00 - 21.00\",\n  \"aktif\": true\n}",
-                  "options": { "raw": { "language": "json" } }
-                },
-                "url": {
-                  "raw": "{{base_url}}/umkm/1",
-                  "host": ["{{base_url}}"],
-                  "path": ["umkm", "1"]
-                },
-                "description": "Update partial field UMKM (semua field opsional). Jika ingin update foto, gunakan `multipart/form-data` seperti endpoint Tambah. Foto lama dihapus otomatis saat diganti."
-              }
-            },
-            {
-              "name": "Hapus UMKM 🔒",
-              "request": {
-                "method": "DELETE",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/umkm/1",
-                  "host": ["{{base_url}}"],
-                  "path": ["umkm", "1"]
-                },
-                "description": "Hapus UMKM beserta semua foto dari storage."
-              }
-            }
-          ]
-        },
-        {
-          "name": "Layer GeoJSON",
-          "item": [
-            {
-              "name": "Batas Dusun (admin-karangasem + admin-blongkeng)",
-              "request": {
-                "auth": { "type": "noauth" },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/layers/admin",
-                  "host": ["{{base_url}}"],
-                  "path": ["layers", "admin"]
-                },
-                "description": "GeoJSON batas administratif 2 dusun (karangasem + blongkeng) digabung jadi satu FeatureCollection. Load langsung ke `L.geoJSON()` Leaflet."
-              }
-            },
-            {
-              "name": "Layer Fasilitas Umum",
-              "request": {
-                "auth": { "type": "noauth" },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/layers/fasilitas",
-                  "host": ["{{base_url}}"],
-                  "path": ["layers", "fasilitas"]
-                },
-                "description": "GeoJSON fasilitas umum (masjid, posyandu, jalan, dll). Placeholder kosong sampai data survei lapangan tersedia."
-              }
-            }
-          ]
-        },
-        {
-          "name": "Profil Dusun",
-          "item": [
-            {
-              "name": "Get Profil Dusun",
-              "request": {
-                "auth": { "type": "noauth" },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/profil/karangasem",
-                  "host": ["{{base_url}}"],
-                  "path": ["profil", "karangasem"]
-                },
-                "description": "Profil dusun beserta konten JSON (sejarah, demografi, potensi, dll). Ganti `karangasem` dengan `blongkeng` untuk dusun satunya. Response `data.konten` berisi struktur bebas yang bisa diatur admin."
-              }
-            }
-          ]
-        },
-        {
-          "name": "Pengumuman",
-          "item": [
-            {
-              "name": "List Pengumuman Aktif",
-              "request": {
-                "auth": { "type": "noauth" },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/pengumuman",
-                  "host": ["{{base_url}}"],
-                  "path": ["pengumuman"]
-                },
-                "description": "List semua pengumuman aktif, diurutkan terbaru. Tampilkan di homepage portal desa."
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ]
+	"info": {
+		"_postman_id": "orkestrasi-digital-api-v1",
+		"name": "Orkestrasi Digital",
+		"description": "API backend untuk sistem Bank Sampah Digital dan Portal Dusun Digital.\n\n**Base URL:** `http://localhost:8000/api/v1`\n\n**Auth:** Endpoint bertanda 🔒 membutuhkan Bearer token. Login dulu via `POST /auth/login`, token akan tersimpan otomatis ke variable `{{token}}`.\n\n**Response format:**\n```json\n{ \"success\": true, \"message\": \"OK\", \"data\": {...}, \"meta\": {...} }\n```\n\n**Kontak BE:** vincentius.erwan23@gmail.com",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "🔐 Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login admin. Token disimpan otomatis ke `{{token}}` via test script.",
+						"auth": {
+							"type": "noauth"
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@desadijital.id\",\n  \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response contains token', function () {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json.success).to.be.true;",
+									"    pm.expect(json.data.token).to.be.a('string').and.not.empty;",
+									"    pm.expect(json.data.token_type).to.eql('Bearer');",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const json = pm.response.json();",
+									"    pm.collectionVariables.set('token', json.data.token);",
+									"    console.log('Token tersimpan:', json.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Login - Password Salah (negative)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Uji negatif: kredensial salah harus ditolak 401, bukan 500 atau 200.",
+						"auth": {
+							"type": "noauth"
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@desadijital.id\",\n  \"password\": \"password-salah-sengaja\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 401', function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test('Response has success:false envelope', function () {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json.success).to.be.false;",
+									"});",
+									"",
+									"pm.test('Error message is informative', function () {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json.message).to.include('salah');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Get Current User (me) 🔒",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						},
+						"description": "Ambil data admin yang sedang login dari token aktif."
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has success:true envelope', function () {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json.success).to.be.true;",
+									"    pm.expect(json).to.have.property('data');",
+									"    pm.expect(json).to.have.property('message');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Get Current User - Tanpa Token (negative)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						},
+						"description": "Uji negatif: tanpa Bearer token harus 401.",
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 401', function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "🗑️ Bank Sampah",
+			"item": [
+				{
+					"name": "Jenis Sampah",
+					"item": [
+						{
+							"name": "List Jenis Sampah",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/jenis-sampah",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"jenis-sampah"
+									]
+								},
+								"description": "List semua jenis sampah yang aktif, diurutkan per kategori. Dipakai FE untuk populate dropdown saat input setoran.",
+								"auth": {
+									"type": "noauth"
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"});",
+											"",
+											"pm.test('All returned items are aktif=true', function () {",
+											"    const json = pm.response.json();",
+											"    json.data.forEach(item => pm.expect(item.aktif).to.be.true);",
+											"});",
+											"",
+											"// Simpan salah satu id jenis sampah aktif untuk dipakai request lain",
+											"// (id asli tidak selalu mulai dari 1, jadi jangan hardcode).",
+											"if (pm.response.code === 200) {",
+											"    const json = pm.response.json();",
+											"    if (json.data.length > 0) {",
+											"        pm.collectionVariables.set('jenis_sampah_id', json.data[0].id);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Update Harga Jenis Sampah 🔒",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/jenis-sampah/{{jenis_sampah_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"jenis-sampah",
+										"{{jenis_sampah_id}}"
+									]
+								},
+								"description": "Update harga beli per satuan. Harga baru akan berlaku untuk setoran berikutnya (harga lama tersimpan di detail_setoran). Pakai {{jenis_sampah_id}} dari 'List Jenis Sampah' di atas.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"harga_per_satuan\": 3500,\n  \"aktif\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(json).to.have.property('data');",
+											"    pm.expect(json).to.have.property('message');",
+											"});",
+											"",
+											"pm.test('Harga di response sesuai yang dikirim', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(String(json.data.harga_per_satuan)).to.eql('3500.00');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Nasabah",
+					"item": [
+						{
+							"name": "List Nasabah",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/nasabah?q=siti",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"nasabah"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "siti"
+										}
+									]
+								},
+								"description": "Pencarian nasabah berdasarkan nama atau no_anggota. Publik (dipakai self-service cek saldo).",
+								"auth": {
+									"type": "noauth"
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(json).to.have.property('data');",
+											"    pm.expect(json).to.have.property('message');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Tambah Nasabah 🔒",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/nasabah",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"nasabah"
+									]
+								},
+								"description": "Endpoint ini admin-only (auth:sanctum) — butuh token. `no_anggota` pakai {{$timestamp}} biar unik tiap run Newman, tidak bentrok dengan data run sebelumnya.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nama\": \"Budi Santoso\",\n  \"no_anggota\": \"KRA-{{$timestamp}}\",\n  \"alamat\": \"Dusun Karangasem, Muntilan\",\n  \"rt\": \"01\",\n  \"rw\": \"02\",\n  \"no_hp\": \"081234567899\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 201', function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test('Nasabah baru punya saldo_tabungan default 0', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(String(json.data.saldo_tabungan)).to.eql('0.00');",
+											"});",
+											"",
+											"pm.test('Response has an id to chain', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.data.id).to.exist;",
+											"    pm.collectionVariables.set('nasabah_id', json.data.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Detail Nasabah",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/nasabah/{{nasabah_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"nasabah",
+										"{{nasabah_id}}"
+									]
+								},
+								"description": "Detail nasabah + riwayat 10 setoran terakhir. Pakai {{nasabah_id}} dari hasil 'Tambah Nasabah' di atas.",
+								"auth": {
+									"type": "noauth"
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(json).to.have.property('data');",
+											"    pm.expect(json).to.have.property('message');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Setoran",
+					"item": [
+						{
+							"name": "Buat Setoran (Nota) 🔒",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/setoran",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"setoran"
+									]
+								},
+								"description": "Transaksi utama bank sampah. Admin-only. Pakai {{nasabah_id}} dari folder Nasabah dan {{jenis_sampah_id}} dari folder Jenis Sampah (folder itu harus jalan duluan, sudah diurutkan begitu di collection ini).",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id_nasabah\": \"{{nasabah_id}}\",\n  \"tanggal\": \"2026-07-16\",\n  \"metode\": \"tunai\",\n  \"catatan\": \"Setoran dari Newman run\",\n  \"items\": [\n    {\n      \"id_jenis_sampah\": \"{{jenis_sampah_id}}\",\n      \"berat_kg\": 2.5\n    }\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 201', function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test('Total harga dihitung dari berat x harga', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(json.data.details).to.have.lengthOf(1);",
+											"});",
+											"",
+											"pm.test('Response has an id to chain', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.data.id).to.exist;",
+											"    pm.collectionVariables.set('setoran_id', json.data.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Detail Setoran",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/setoran/{{setoran_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"setoran",
+										"{{setoran_id}}"
+									]
+								},
+								"description": "Detail satu nota setoran beserta rincian item. Publik.",
+								"auth": {
+									"type": "noauth"
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(json).to.have.property('data');",
+											"    pm.expect(json).to.have.property('message');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Download PDF Nota",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/setoran/{{setoran_id}}/pdf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"setoran",
+										"{{setoran_id}}",
+										"pdf"
+									]
+								},
+								"description": "Export nota sebagai PDF (A5). Publik.",
+								"auth": {
+									"type": "noauth"
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response is a PDF file', function () {",
+											"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/pdf');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Tabungan",
+					"item": [
+						{
+							"name": "Riwayat Tabungan Nasabah",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/tabungan/{{nasabah_id}}?page=1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"tabungan",
+										"{{nasabah_id}}"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								},
+								"description": "Riwayat transaksi tabungan (masuk/keluar) milik satu nasabah. Publik.",
+								"auth": {
+									"type": "noauth"
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(json).to.have.property('data');",
+											"    pm.expect(json).to.have.property('message');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Tarik Tabungan 🔒",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/tabungan/tarik",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"tabungan",
+										"tarik"
+									]
+								},
+								"description": "Penarikan tabungan. Admin-only. Kalau saldo nasabah 0 (nasabah baru dari metode tunai di atas), request ini SENGAJA akan gagal 422 — itu perilaku yang benar, lihat test di bawah.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id_nasabah\": \"{{nasabah_id}}\",\n  \"jumlah\": 1000,\n  \"keterangan\": \"Tarik tunai dari Newman run\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Response status is 200 (saldo cukup) or 422 (saldo tidak cukup)', function () {",
+											"    pm.expect([200, 422]).to.include(pm.response.code);",
+											"});",
+											"",
+											"if (pm.response.code === 422) {",
+											"    pm.test('Pesan error saldo tidak mencukupi', function () {",
+											"        const json = pm.response.json();",
+											"        pm.expect(json.message).to.include('tidak mencukupi');",
+											"    });",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Laporan 🔒",
+					"item": [
+						{
+							"name": "Laporan Harian",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/laporan/harian?tanggal=2026-07-16",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"laporan",
+										"harian"
+									],
+									"query": [
+										{
+											"key": "tanggal",
+											"value": "2026-07-16"
+										}
+									]
+								},
+								"description": "Rekap setoran harian. Admin-only."
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(json).to.have.property('data');",
+											"    pm.expect(json).to.have.property('message');",
+											"});",
+											"",
+											"pm.test('Response has total_nota and total_harga', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.data).to.have.property('total_nota');",
+											"    pm.expect(json.data).to.have.property('total_harga');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Laporan Bulanan",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/laporan/bulanan?bulan=2026-07",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"laporan",
+										"bulanan"
+									],
+									"query": [
+										{
+											"key": "bulan",
+											"value": "2026-07"
+										}
+									]
+								},
+								"description": "Rekap setoran bulanan, termasuk breakdown per_hari dan per_metode. Admin-only."
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(json).to.have.property('data');",
+											"    pm.expect(json).to.have.property('message');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Export Excel",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/laporan/export?bulan=2026-07",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"laporan",
+										"export"
+									],
+									"query": [
+										{
+											"key": "bulan",
+											"value": "2026-07"
+										}
+									]
+								},
+								"description": "Download laporan bulanan sebagai .xlsx. Admin-only."
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response is an Excel file', function () {",
+											"    const contentType = pm.response.headers.get('Content-Type');",
+											"    pm.expect(contentType).to.include('spreadsheet');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "🗺️ Portal Desa",
+			"item": [
+				{
+					"name": "UMKM",
+					"item": [
+						{
+							"name": "List UMKM",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/umkm?dusun=karangasem&kategori=kuliner&q=warung",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"umkm"
+									],
+									"query": [
+										{
+											"key": "dusun",
+											"value": "karangasem"
+										},
+										{
+											"key": "kategori",
+											"value": "kuliner"
+										},
+										{
+											"key": "q",
+											"value": "warung"
+										}
+									]
+								},
+								"description": "Katalog UMKM dengan filter dusun/kategori/pencarian. Publik.",
+								"auth": {
+									"type": "noauth"
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(json).to.have.property('data');",
+											"    pm.expect(json).to.have.property('message');",
+											"});",
+											"",
+											"pm.test('Response has pagination meta', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.meta).to.have.property('total');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Tambah UMKM 🔒",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/umkm",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"umkm"
+									]
+								},
+								"description": "Admin-only, multipart/form-data kalau menyertakan foto — request ini sengaja pakai JSON tanpa foto untuk smoke test otomatis.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nama_usaha\": \"Warung Newman Test\",\n  \"nama_pemilik\": \"Pemilik Uji Coba\",\n  \"dusun\": \"karangasem\",\n  \"kategori\": \"kuliner\",\n  \"deskripsi\": \"Dibuat otomatis oleh Newman run untuk uji coba API.\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 201', function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test('UMKM baru aktif=true secara default', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.data.aktif).to.be.true;",
+											"});",
+											"",
+											"pm.test('Response has an id to chain', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.data.id).to.exist;",
+											"    pm.collectionVariables.set('umkm_id', json.data.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Detail UMKM",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/umkm/{{umkm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"umkm",
+										"{{umkm_id}}"
+									]
+								},
+								"description": "Detail satu UMKM. Publik.",
+								"auth": {
+									"type": "noauth"
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(json).to.have.property('data');",
+											"    pm.expect(json).to.have.property('message');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Edit UMKM 🔒",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/umkm/{{umkm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"umkm",
+										"{{umkm_id}}"
+									]
+								},
+								"description": "Admin-only. Update sebagian field (partial update).",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"deskripsi\": \"Deskripsi sudah diperbarui oleh Newman run.\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(json).to.have.property('data');",
+											"    pm.expect(json).to.have.property('message');",
+											"});",
+											"",
+											"pm.test('Deskripsi ter-update', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.data.deskripsi).to.eql('Deskripsi sudah diperbarui oleh Newman run.');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Hapus UMKM 🔒",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/umkm/{{umkm_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"umkm",
+										"{{umkm_id}}"
+									]
+								},
+								"description": "Admin-only. Jalankan PALING TERAKHIR di folder ini — membersihkan data yang dibuat 'Tambah UMKM' supaya Newman run berikutnya tidak menumpuk data uji coba."
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(json).to.have.property('data');",
+											"    pm.expect(json).to.have.property('message');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Layer GeoJSON",
+					"item": [
+						{
+							"name": "Batas Dusun (admin-karangasem + admin-blongkeng)",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/layers/admin",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"layers",
+										"admin"
+									]
+								},
+								"description": "GeoJSON batas administratif 2 dusun digabung jadi satu FeatureCollection. Publik.",
+								"auth": {
+									"type": "noauth"
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response is a valid GeoJSON FeatureCollection', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.type).to.eql('FeatureCollection');",
+											"    pm.expect(json.features).to.be.an('array');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Layer Fasilitas Umum",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/layers/fasilitas",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"layers",
+										"fasilitas"
+									]
+								},
+								"description": "GeoJSON fasilitas umum (masjid, posyandu, jalan, dll). Placeholder kosong sampai data survei lapangan tersedia. Publik.",
+								"auth": {
+									"type": "noauth"
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response is a valid GeoJSON FeatureCollection', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.type).to.eql('FeatureCollection');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Profil Dusun",
+					"item": [
+						{
+							"name": "Get Profil Dusun",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/profil/karangasem",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profil",
+										"karangasem"
+									]
+								},
+								"description": "Profil satu dusun (karangasem|blongkeng). Kalau belum diisi, mengembalikan konten:null dengan status 200 (bukan 404) — 'belum tersedia' bukan error. Publik.",
+								"auth": {
+									"type": "noauth"
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(json).to.have.property('data');",
+											"    pm.expect(json).to.have.property('message');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Update Profil Dusun 🔒",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/profil/karangasem",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profil",
+										"karangasem"
+									]
+								},
+								"description": "Admin-only. `konten` bebas JSON apapun, langsung tampil di halaman publik.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"konten\": {\n    \"sejarah\": \"Diperbarui oleh Newman run.\",\n    \"jumlah_kk\": 120\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(json).to.have.property('data');",
+											"    pm.expect(json).to.have.property('message');",
+											"});",
+											"",
+											"pm.test('Konten ter-update', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.data.konten.jumlah_kk).to.eql(120);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Update Profil Dusun - Nama Tidak Valid (negative)",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/profil/tegalwungu",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profil",
+										"tegalwungu"
+									]
+								},
+								"description": "Uji negatif: 'tegalwungu' adalah nama lama sebelum rename ke 'blongkeng', harus ditolak 404.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"konten\": {\n    \"sejarah\": \"Percobaan nama dusun lama, sudah tidak berlaku.\"\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 404', function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"pm.test('Response has success:false envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.false;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Pengumuman",
+					"item": [
+						{
+							"name": "List Pengumuman Aktif",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/pengumuman",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"pengumuman"
+									]
+								},
+								"description": "List pengumuman aktif, terurut tanggal_publish terbaru. Publik.",
+								"auth": {
+									"type": "noauth"
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(json).to.have.property('data');",
+											"    pm.expect(json).to.have.property('message');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Tambah Pengumuman 🔒",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/pengumuman",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"pengumuman"
+									]
+								},
+								"description": "Admin-only.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"judul\": \"Pengumuman Uji Coba Newman\",\n  \"isi\": \"Pengumuman ini dibuat otomatis oleh Newman run untuk uji coba API.\",\n  \"tanggal_publish\": \"2026-07-16\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 201', function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test('Pengumuman baru aktif=true secara default', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.data.aktif).to.be.true;",
+											"});",
+											"",
+											"pm.test('Response has an id to chain', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.data.id).to.exist;",
+											"    pm.collectionVariables.set('pengumuman_id', json.data.id);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Edit Pengumuman 🔒",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/pengumuman/{{pengumuman_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"pengumuman",
+										"{{pengumuman_id}}"
+									]
+								},
+								"description": "Admin-only. Partial update — field lain (isi, tanggal_publish) tidak boleh ikut ter-null-kan.",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"judul\": \"Judul sudah diperbarui oleh Newman run\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(json).to.have.property('data');",
+											"    pm.expect(json).to.have.property('message');",
+											"});",
+											"",
+											"pm.test('Judul ter-update', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.data.judul).to.eql('Judul sudah diperbarui oleh Newman run');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Hapus Pengumuman 🔒",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/pengumuman/{{pengumuman_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"pengumuman",
+										"{{pengumuman_id}}"
+									]
+								},
+								"description": "Admin-only. Jalankan PALING TERAKHIR di folder ini untuk membersihkan data uji coba."
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"    pm.expect(json).to.have.property('data');",
+											"    pm.expect(json).to.have.property('message');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Kegiatan KKN",
+					"item": [
+						{
+							"name": "List Kegiatan KKN",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/kegiatan-kkn",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"kegiatan-kkn"
+									]
+								},
+								"description": "List dokumentasi kegiatan KKN per tahun, terurut tahun terbaru. Publik.",
+								"auth": {
+									"type": "noauth"
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has success:true envelope', function () {",
+											"    const json = pm.response.json();",
+											"    pm.expect(json.success).to.be.true;",
+											"});",
+											"",
+											"if (pm.response.code === 200) {",
+											"    const json = pm.response.json();",
+											"    if (json.data.length > 0) {",
+											"        pm.collectionVariables.set('kegiatan_tahun', json.data[0].tahun);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						},
+						{
+							"name": "Detail Kegiatan KKN per Tahun",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/kegiatan-kkn/{{kegiatan_tahun}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"kegiatan-kkn",
+										"{{kegiatan_tahun}}"
+									]
+								},
+								"description": "Detail dokumentasi kegiatan KKN untuk satu tahun tertentu. Pakai {{kegiatan_tahun}} dari 'List Kegiatan KKN' di atas. Kalau belum ada data ter-seed, wajar dapat 404 — lihat test di bawah.",
+								"auth": {
+									"type": "noauth"
+								}
+							},
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Response status is 200 (ada data) or 404 (belum ada data tahun ini)', function () {",
+											"    pm.expect([200, 404]).to.include(pm.response.code);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "🚪 Logout (jalankan terakhir)",
+			"item": [
+				{
+					"name": "Logout 🔒",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Cabut token yang sedang dipakai. HARUS jadi request terakhir kalau menjalankan seluruh collection ini, karena semua folder lain butuh token yang masih aktif."
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has success:true envelope', function () {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json.success).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api/v1",
+			"type": "string",
+			"description": "Ganti ke URL production saat deploy"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string",
+			"description": "Terisi otomatis setelah login berhasil"
+		},
+		{
+			"key": "nasabah_id",
+			"value": "",
+			"type": "string",
+			"description": "Terisi otomatis setelah 'Tambah Nasabah'"
+		},
+		{
+			"key": "jenis_sampah_id",
+			"value": "",
+			"type": "string",
+			"description": "Terisi otomatis dari 'List Jenis Sampah' (id item pertama)"
+		},
+		{
+			"key": "setoran_id",
+			"value": "",
+			"type": "string",
+			"description": "Terisi otomatis setelah 'Buat Setoran (Nota)'"
+		},
+		{
+			"key": "umkm_id",
+			"value": "",
+			"type": "string",
+			"description": "Terisi otomatis setelah 'Tambah UMKM'"
+		},
+		{
+			"key": "pengumuman_id",
+			"value": "",
+			"type": "string",
+			"description": "Terisi otomatis setelah 'Tambah Pengumuman'"
+		},
+		{
+			"key": "kegiatan_tahun",
+			"value": "",
+			"type": "string",
+			"description": "Terisi otomatis dari 'List Kegiatan KKN' (tahun data pertama)"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	}
 }
