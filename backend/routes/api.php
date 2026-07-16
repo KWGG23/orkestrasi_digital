@@ -57,7 +57,6 @@ Route::prefix('v1')->group(function () {
 
     // GeoJSON layers
     Route::get('layers/admin', [LayerController::class, 'admin']);
-    Route::get('layers/bencana', [LayerController::class, 'bencana']);
     Route::get('layers/fasilitas', [LayerController::class, 'fasilitas']);
 
     // Profil dusun & pengumuman

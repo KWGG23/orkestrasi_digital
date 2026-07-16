@@ -1,12 +1,27 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { Leaf, Receipt, SignOut, SquaresFour, Storefront, Wallet } from '@phosphor-icons/react'
+import {
+  Buildings,
+  FileText,
+  Leaf,
+  Megaphone,
+  Receipt,
+  Recycle,
+  SignOut,
+  SquaresFour,
+  Storefront,
+  Wallet,
+} from '@phosphor-icons/react'
 import { useAuth } from '../../context/AuthContext.jsx'
 
 const NAV_LINKS = [
   { to: '/admin', label: 'Dashboard', icon: SquaresFour, end: true },
   { to: '/admin/setoran', label: 'Setoran Baru', icon: Receipt },
   { to: '/admin/tabungan', label: 'Tabungan', icon: Wallet },
+  { to: '/admin/jenis-sampah', label: 'Harga Sampah', icon: Recycle },
+  { to: '/admin/laporan', label: 'Laporan', icon: FileText },
   { to: '/admin/umkm', label: 'UMKM', icon: Storefront },
+  { to: '/admin/profil', label: 'Profil Dusun', icon: Buildings },
+  { to: '/admin/pengumuman', label: 'Pengumuman', icon: Megaphone },
 ]
 
 export default function AdminLayout({ children }) {

@@ -55,8 +55,7 @@ Proyek KKN digitalisasi yang terdiri dari **dua sub-sistem**:
 │
 ├── geojson/          # Data spasial statis (shared)
 │   ├── admin-karangasem.geojson
-│   ├── admin-blongkeng.geojson
-│   └── bencana.geojson
+│   └── admin-blongkeng.geojson
 │
 └── CLAUDE.md
 ```
@@ -264,7 +263,6 @@ PUT    /api/v1/umkm/{id}            # edit UMKM (admin)
 DELETE /api/v1/umkm/{id}            # hapus (admin)
 
 GET    /api/v1/layers/admin         # GeoJSON batas dusun
-GET    /api/v1/layers/bencana       # GeoJSON kerentanan tanah
 GET    /api/v1/layers/fasilitas     # GeoJSON fasilitas umum
 
 GET    /api/v1/profil/{dusun}       # profil dusun (karangasem|blongkeng)
@@ -333,7 +331,6 @@ Kredensial admin default (development):
 ## Catatan Penting
 
 - **Jangan push `.env`** ke repo. Gunakan `.env.example` sebagai template.
-- **GeoJSON bencana** — sumber data dari BNPB / BIG / data primer lapangan. Belum tersedia, simpan placeholder dulu.
 - **Harga sampah BSI** bisa berubah — admin harus bisa update via panel tanpa perlu coding.
 - **Saldo tabungan** di tabel `nasabah` adalah denormalisasi untuk performa. Selalu update via `TransaksiTabunganService`, jangan update langsung.
 - **Dua dusun di UMKM** — field `dusun` ENUM wajib diisi. Ini kunci filter utama di peta.

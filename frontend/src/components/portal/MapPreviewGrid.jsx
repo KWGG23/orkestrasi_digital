@@ -1,4 +1,4 @@
-import { MapPin, Warning } from '@phosphor-icons/react'
+import { MapPin } from '@phosphor-icons/react'
 import { useGeoLayer } from '../../hooks/useGeoLayer.js'
 import FeatureCard from './FeatureCard.jsx'
 import SectionHeading from './SectionHeading.jsx'
@@ -11,7 +11,6 @@ function badgeFor(query) {
 
 export default function MapPreviewGrid() {
   const admin = useGeoLayer('admin')
-  const bencana = useGeoLayer('bencana')
 
   return (
     <section id="peta" className="py-16">
@@ -19,7 +18,7 @@ export default function MapPreviewGrid() {
         <SectionHeading
           eyebrow="Peta Interaktif"
           title="Wilayah dalam satu peta"
-          description="Batas administratif dan kerentanan bencana, disatukan dari data survei lapangan dan BNPB/BIG."
+          description="Batas administratif, disatukan dari data survei lapangan."
         />
 
         <div className="mt-8 grid gap-6 sm:grid-cols-2">
@@ -30,15 +29,6 @@ export default function MapPreviewGrid() {
             description="Lihat batas wilayah kedua dusun beserta fasilitas umum di sekitarnya."
             to="/portal/peta/administratif"
             badge={badgeFor(admin)}
-          />
-          <FeatureCard
-            icon={Warning}
-            eyebrow="Peta Kerentanan Bencana"
-            title="Kerentanan Bencana"
-            description="Rujukan mitigasi berbasis data BNPB/BIG dan survei primer lapangan."
-            to="/portal/peta/bencana"
-            tone="accent"
-            badge={badgeFor(bencana)}
           />
         </div>
       </div>

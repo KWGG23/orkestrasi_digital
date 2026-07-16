@@ -60,6 +60,28 @@ export async function apiUpload(path, formData, token = null, { isUpdate = false
   return { data: json.data, meta: json.meta ?? null, message: json.message }
 }
 
+// Unduh file biner (mis. export Excel laporan) yang perlu header Authorization,
+// jadi tidak bisa dipakai lewat <a href> biasa.
+export async function apiDownload(path, params = {}, token = null, filename = 'download') {
+  const query = new URLSearchParams(
+    Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== '')
+  ).toString()
+
+  const headers = {}
+  if (token) headers['Authorization'] = `Bearer ${token}`
+
+  const res = await fetch(`${API_BASE_URL}${path}${query ? `?${query}` : ''}`, { headers })
+  if (!res.ok) throw new Error(`Gagal mengunduh ${path}`)
+
+  const blob = await res.blob()
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
 export function storageUrl(path) {
   if (!path) return null
   const origin = API_BASE_URL.replace(/\/api\/v1\/?$/, '')

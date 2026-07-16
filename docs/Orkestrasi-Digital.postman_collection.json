@@ -520,20 +520,6 @@
               }
             },
             {
-              "name": "Layer Kerentanan Bencana",
-              "request": {
-                "auth": { "type": "noauth" },
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/layers/bencana",
-                  "host": ["{{base_url}}"],
-                  "path": ["layers", "bencana"]
-                },
-                "description": "GeoJSON kerentanan tanah. Sumber: BNPB/BIG/survei lapangan. Placeholder kosong sampai data tersedia."
-              }
-            },
-            {
               "name": "Layer Fasilitas Umum",
               "request": {
                 "auth": { "type": "noauth" },

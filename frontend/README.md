@@ -16,7 +16,7 @@ Kabupaten Magelang):
 - **Bank Sampah Digital** — khusus Dusun Karangasem. Pencatatan setoran sampah, tabungan
   warga, laporan.
 - **Portal Desa Digital** — Karangasem + Blongkeng. Profil dusun, katalog UMKM, peta
-  administratif & kerentanan bencana.
+  administratif.
 
 Backend Laravel sudah menyediakan seluruh API (lihat `../backend/routes/api.php` dan bagian
 "API Contract" di `../CLAUDE.md`). Tugas frontend adalah mengonsumsi API tersebut.
@@ -103,7 +103,7 @@ src/
 │   ├── landing/              # Section-section khusus halaman "/" (marketing)
 │   ├── portal/               # Section-section khusus hub "/portal"
 │   ├── layout/               # Navbar, Footer, PortalLayout (breadcrumb wrapper)
-│   ├── map/                  # GeoMap (Leaflet) + MapPageLayout (dipakai 2 halaman peta)
+│   ├── map/                  # GeoMap (Leaflet) + MapPageLayout (dipakai halaman peta)
 │   ├── umkm/                 # UmkmCard, dipakai di preview & katalog penuh
 │   ├── profil/                # ProfilContent — render defensif JSON `konten` profil dusun
 │   └── decorative/            # OrganicBlob (SVG dekorasi biophilic)
@@ -112,7 +112,7 @@ src/
 │   ├── useLiveStats.js         # Total nasabah/umkm/jenis-sampah untuk hero/metrics
 │   ├── useProfilDusun.js       # GET /profil/{dusun}
 │   ├── useUmkmList.js          # GET /umkm (filter dusun/kategori/q)
-│   ├── useGeoLayer.js          # GET /layers/{admin|bencana|fasilitas}
+│   ├── useGeoLayer.js          # GET /layers/{admin|fasilitas}
 │   └── useNasabah.js           # GET /nasabah (search) & /nasabah/{id} (detail+riwayat)
 │
 ├── lib/api.js                 # apiGet() helper untuk envelope {success,data,meta}
@@ -128,7 +128,6 @@ src/
 | `/portal/profil/:dusun` | `pages/DusunProfilePage.jsx` | `GET /profil/{karangasem\|blongkeng}` |
 | `/portal/umkm` | `pages/UmkmCatalogPage.jsx` | `GET /umkm` |
 | `/portal/peta/administratif` | `pages/PetaAdministratifPage.jsx` | `GET /layers/admin` |
-| `/portal/peta/bencana` | `pages/PetaBencanaPage.jsx` | `GET /layers/bencana` |
 | `/portal/bank-sampah` | `pages/BankSampahPortalPage.jsx` | `GET /nasabah`, `GET /nasabah/{id}` |
 
 ---
@@ -164,7 +163,7 @@ src/
 - Landing page marketing (`/`) lengkap: hero, live impact metrics, kalkulator estimasi
   nilai + jejak karbon sampah, section program, badge kemitraan, CTA.
 - Portal hub (`/portal`) dengan live stats dan kartu ke 5 area fitur.
-- Profil dusun, katalog UMKM (dengan filter dusun/kategori/pencarian), 2 halaman peta
+- Profil dusun, katalog UMKM (dengan filter dusun/kategori/pencarian), halaman peta
   Leaflet, dan portal cek saldo/riwayat bank sampah (read-only, publik, khusus
   Karangasem) — semua sudah terhubung ke API asli, bukan mock data.
 - Semua state kosong (belum ada UMKM, profil belum tersedia, geojson belum ada fitur)
@@ -190,7 +189,7 @@ paling kelihatan gap-nya:
    ataupun tombol unduh nota PDF (`GET /setoran/{id}/pdf`).
 5. **Layer `fasilitas` belum dipakai** (`GET /layers/fasilitas` — fasilitas umum). Sudah
    ada di backend, tapi tidak muncul di `GeoMap.jsx`/halaman peta manapun. Bisa
-   ditambahkan sebagai layer tambahan yang bisa di-toggle di kedua halaman peta.
+   ditambahkan sebagai layer tambahan yang bisa di-toggle di halaman peta administratif.
 6. **Pengumuman desa belum ditampilkan** (`GET /pengumuman`). Tidak ada section/halaman
    yang menampilkan ini di portal maupun landing page.
 7. **Belum ada form tambah nasabah** (`POST /nasabah`) — mungkin bagian dari fitur admin
@@ -198,7 +197,7 @@ paling kelihatan gap-nya:
    (perlu didiskusikan dengan pengurus bank sampah apakah pendaftaran nasabah baru boleh
    mandiri atau harus lewat pengurus).
 8. **Data asli belum ada** — ini bukan bug kode, tapi catatan penting: `geojson/`
-   (batas administratif, kerentanan bencana) masih file kosong, belum ada UMKM/profil
+   (batas administratif) masih file kosong, belum ada UMKM/profil
    dusun ter-seed di database. Semua ini nunggu hasil survei lapangan tim KKN. Kalau
    ini tiba, biasanya cukup isi lewat admin panel (setelah dibangun) — tidak perlu ubah
    kode frontend.

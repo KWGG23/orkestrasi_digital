@@ -41,7 +41,7 @@ truth) untuk kontrak API antara backend dan frontend.
 - React 19 + Vite 8 (plain JSX, tanpa TypeScript)
 - React Router 7, TanStack Query 5
 - Tailwind CSS v4 (config via `@theme` di `src/index.css`, bukan `tailwind.config.js`)
-- Leaflet + react-leaflet 5 — peta administratif & kerentanan bencana
+- Leaflet + react-leaflet 5 — peta administratif
 
 ---
 
@@ -91,10 +91,9 @@ Base URL: `/api/v1/`. Semua response memakai amplop JSON konsisten:
 { "success": true, "data": { ... }, "message": "OK", "meta": { "total": 10, "page": 1 } }
 ```
 
-Endpoint publik meliputi katalog UMKM, layer GeoJSON (batas administratif, kerentanan
-bencana, fasilitas umum), profil dusun, pengumuman, serta lookup saldo/riwayat nasabah bank
-sampah. Endpoint yang mengubah data (tambah/edit UMKM, update harga sampah, laporan admin)
-dilindungi Sanctum.
+Endpoint publik meliputi katalog UMKM, layer GeoJSON (batas administratif, fasilitas umum),
+profil dusun, pengumuman, serta lookup saldo/riwayat nasabah bank sampah. Endpoint yang
+mengubah data (tambah/edit UMKM, update harga sampah, laporan admin) dilindungi Sanctum.
 
 Daftar lengkap endpoint ada di [`CLAUDE.md`](./CLAUDE.md#api-contract) dan
 `backend/routes/api.php`. Koleksi Postman untuk uji coba manual tersedia di
@@ -105,7 +104,5 @@ Daftar lengkap endpoint ada di [`CLAUDE.md`](./CLAUDE.md#api-contract) dan
 ## Catatan
 
 - Jangan commit file `.env` — gunakan `.env.example` sebagai template.
-- Data GeoJSON kerentanan bencana masih placeholder kosong; menunggu data survei
-  lapangan/BNPB/BIG.
 - Harga sampah dari BSI bisa berubah sewaktu-waktu — admin bisa update lewat panel tanpa
   perlu ubah kode.

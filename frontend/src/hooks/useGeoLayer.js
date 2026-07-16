@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { API_BASE_URL } from '../lib/api.js'
 
-// layer: 'admin' | 'bencana' | 'fasilitas'
+// layer: 'admin' | 'fasilitas'
 // Endpoint ini mengembalikan GeoJSON FeatureCollection mentah (bukan amplop ApiResponse standar).
 export function useGeoLayer(layer) {
   return useQuery({

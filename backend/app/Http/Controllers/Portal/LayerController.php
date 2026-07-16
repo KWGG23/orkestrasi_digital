@@ -12,11 +12,6 @@ class LayerController extends Controller
         return $this->serveGeojson('admin-karangasem.geojson', 'admin-blongkeng.geojson');
     }
 
-    public function bencana()
-    {
-        return $this->serveGeojson('bencana.geojson');
-    }
-
     public function fasilitas()
     {
         return $this->serveGeojson('fasilitas.geojson');

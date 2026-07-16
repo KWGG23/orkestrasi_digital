@@ -5,7 +5,6 @@ import UmkmCatalogPage from './pages/UmkmCatalogPage.jsx'
 import UmkmDetailPage from './pages/UmkmDetailPage.jsx'
 import KegiatanKknDetailPage from './pages/KegiatanKknDetailPage.jsx'
 import PetaAdministratifPage from './pages/PetaAdministratifPage.jsx'
-import PetaBencanaPage from './pages/PetaBencanaPage.jsx'
 import BankSampahPortalPage from './pages/BankSampahPortalPage.jsx'
 import RequireAuth from './components/admin/RequireAuth.jsx'
 import AdminLoginPage from './pages/admin/AdminLoginPage.jsx'
@@ -13,6 +12,10 @@ import AdminDashboardPage from './pages/admin/AdminDashboardPage.jsx'
 import AdminSetoranPage from './pages/admin/AdminSetoranPage.jsx'
 import AdminTabunganPage from './pages/admin/AdminTabunganPage.jsx'
 import AdminUmkmPage from './pages/admin/AdminUmkmPage.jsx'
+import AdminJenisSampahPage from './pages/admin/AdminJenisSampahPage.jsx'
+import AdminLaporanPage from './pages/admin/AdminLaporanPage.jsx'
+import AdminProfilDusunPage from './pages/admin/AdminProfilDusunPage.jsx'
+import AdminPengumumanPage from './pages/admin/AdminPengumumanPage.jsx'
 
 function App() {
   return (
@@ -24,7 +27,6 @@ function App() {
       <Route path="/portal/umkm/:id" element={<UmkmDetailPage />} />
       <Route path="/portal/kegiatan/:tahun" element={<KegiatanKknDetailPage />} />
       <Route path="/portal/peta/administratif" element={<PetaAdministratifPage />} />
-      <Route path="/portal/peta/bencana" element={<PetaBencanaPage />} />
       <Route path="/portal/bank-sampah" element={<BankSampahPortalPage />} />
 
       <Route path="/admin/login" element={<AdminLoginPage />} />
@@ -33,6 +35,10 @@ function App() {
         <Route path="/admin/setoran" element={<AdminSetoranPage />} />
         <Route path="/admin/tabungan" element={<AdminTabunganPage />} />
         <Route path="/admin/umkm" element={<AdminUmkmPage />} />
+        <Route path="/admin/jenis-sampah" element={<AdminJenisSampahPage />} />
+        <Route path="/admin/laporan" element={<AdminLaporanPage />} />
+        <Route path="/admin/profil" element={<AdminProfilDusunPage />} />
+        <Route path="/admin/pengumuman" element={<AdminPengumumanPage />} />
       </Route>
     </Routes>
   )
