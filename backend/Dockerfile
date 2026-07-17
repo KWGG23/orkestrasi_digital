@@ -9,7 +9,13 @@ FROM richarvey/nginx-php-fpm:3.1.6
 # tanpa ini). Build tool (gcc dkk) sudah dihapus di base image demi ukuran,
 # jadi diinstall ulang sementara lewat $PHPIZE_DEPS (env var standar dari
 # image php: resmi) lalu dihapus lagi setelah kompilasi selesai.
-RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+#
+# mbstring butuh library oniguruma (regex engine-nya) -- "oniguruma" (paket
+# runtime .so) diinstall PERMANEN (di luar .build-deps) supaya tetap ada
+# setelah cleanup, sementara "oniguruma-dev" (header buat compile) ikut
+# masuk .build-deps dan boleh dihapus setelah selesai.
+RUN apk add --no-cache oniguruma \
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS oniguruma-dev \
     && docker-php-ext-install mbstring \
     && apk del .build-deps
 
