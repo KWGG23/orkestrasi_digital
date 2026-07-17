@@ -16,5 +16,14 @@ php artisan route:cache
 echo "Running migrations..."
 php artisan migrate --force
 
+echo "Seeding admin user..."
+# updateOrCreate berdasar email -- aman dijalankan tiap deploy, tidak bikin
+# duplikat. Seeder lain (JenisSampahSeeder, dll) sengaja TIDAK di sini karena
+# JenisSampahSeeder truncate() tabel jenis_sampahs setiap jalan -- kalau ikut
+# auto-run bakal nge-reset harga yang sudah diupdate admin lewat panel tiap
+# ada deploy baru. Seeder semacam itu dijalankan manual sekali lewat Render
+# Shell saja.
+php artisan db:seed --class=AdminSeeder --force
+
 # storage:link sengaja tidak dijalankan -- disk 'public' produksi pakai
 # FILESYSTEM_PUBLIC_DRIVER=s3 (Supabase Storage), symlink lokal tidak relevan.
