@@ -38,26 +38,26 @@ return [
             'report' => false,
         ],
 
+        // Driver-nya sengaja env-driven (bukan disk 's3' terpisah) supaya semua
+        // kode yang sudah pakai Storage::disk('public') -- UmkmController,
+        // LayerController, dst -- otomatis ikut pindah ke S3/Supabase Storage
+        // cukup lewat env var, tanpa ubah kode sama sekali. Railway filesystem-nya
+        // ephemeral (hilang tiap redeploy), jadi produksi WAJIB pakai driver 's3'
+        // (lihat FILESYSTEM_PUBLIC_DRIVER di .env.example).
         'public' => [
-            'driver' => 'local',
+            'driver' => env('FILESYSTEM_PUBLIC_DRIVER', 'local'),
             'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            'url' => env('AWS_URL', rtrim(env('APP_URL', 'http://localhost'), '/').'/storage'),
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
-        ],
-
-        's3' => [
-            'driver' => 's3',
+            // Kunci di bawah ini cuma dipakai kalau driver di atas = 's3'.
             'key' => env('AWS_ACCESS_KEY_ID'),
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_BUCKET'),
-            'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
-            'throw' => false,
-            'report' => false,
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', true),
         ],
 
     ],

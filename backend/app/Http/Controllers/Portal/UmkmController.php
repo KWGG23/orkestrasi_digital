@@ -117,8 +117,9 @@ class UmkmController extends Controller
 
     private function simpanFoto($file): string
     {
-        $filename = uniqid('umkm_').'.'.$file->getClientOriginalExtension();
-        $path = storage_path('app/public/umkm/'.$filename);
+        $extension = $file->getClientOriginalExtension();
+        $filename = uniqid('umkm_').'.'.$extension;
+        $path = 'umkm/'.$filename;
 
         $image = Image::read($file);
 
@@ -126,9 +127,13 @@ class UmkmController extends Controller
             $image->scale(width: 800);
         }
 
-        $image->save($path);
+        // Lewat Storage::disk('public') (bukan Image::save() ke storage_path()
+        // langsung) supaya foto benar-benar ikut driver disk 'public' yang
+        // dikonfigurasi -- termasuk kalau itu S3/Supabase Storage, bukan cuma
+        // disk lokal container yang hilang tiap redeploy di Railway.
+        Storage::disk('public')->put($path, (string) $image->encodeByExtension($extension));
 
-        return 'umkm/'.$filename;
+        return $path;
     }
 
     private function hapusFoto(?string $path): void
