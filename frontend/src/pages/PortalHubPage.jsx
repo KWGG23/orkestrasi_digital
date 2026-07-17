@@ -5,10 +5,12 @@ import UmkmPreviewSection from '../components/portal/UmkmPreviewSection.jsx'
 import KegiatanKknSection from '../components/portal/KegiatanKknSection.jsx'
 import MapPreviewGrid from '../components/portal/MapPreviewGrid.jsx'
 import BankSampahCTA from '../components/portal/BankSampahCTA.jsx'
+import Seo from '../components/Seo.jsx'
 
 export default function PortalHubPage() {
   return (
     <PortalLayout>
+      <Seo canonicalPath="/portal" />
       <PortalHero />
       <DusunProfileGrid />
       <UmkmPreviewSection />

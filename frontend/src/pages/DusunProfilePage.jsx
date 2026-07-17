@@ -4,6 +4,7 @@ import { Buildings, MapPin, ArrowLeft } from "@phosphor-icons/react";
 import PortalLayout from "../components/layout/PortalLayout.jsx";
 import { useProfilDusun } from "../hooks/useProfilDusun.js";
 import ProfilContent from "../components/profil/ProfilContent.jsx";
+import Seo from "../components/Seo.jsx";
 
 const DUSUN_LABEL = {
   karangasem: "Dusun Karangasem",
@@ -30,6 +31,7 @@ export default function DusunProfilePage() {
           },
         ]}
       >
+        <Seo title="Dusun Tidak Ditemukan" noindex />
         <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6">
           <span
             className="
@@ -100,6 +102,10 @@ export default function DusunProfilePage() {
         },
       ]}
     >
+      <Seo
+        title={DUSUN_LABEL[dusun]}
+        description={`Profil ${DUSUN_LABEL[dusun]}, Desa Blongkeng, Kecamatan Ngluwar, Kabupaten Magelang — sejarah, kondisi geografis, demografi, dan potensi wilayah.`}
+      />
       <section className="relative overflow-hidden">
         <div
           className="

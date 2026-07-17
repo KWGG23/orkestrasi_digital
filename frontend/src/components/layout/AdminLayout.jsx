@@ -12,6 +12,7 @@ import {
   Wallet,
 } from '@phosphor-icons/react'
 import { useAuth } from '../../context/AuthContext.jsx'
+import Seo from '../Seo.jsx'
 
 const NAV_LINKS = [
   { to: '/admin', label: 'Dashboard', icon: SquaresFour, end: true },
@@ -35,6 +36,7 @@ export default function AdminLayout({ children }) {
 
   return (
     <div className="min-h-dvh bg-background">
+      <Seo title="Admin" noindex />
       <header className="sticky top-0 z-50 border-b border-border/70 bg-white/90 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
           <Link to="/admin" className="flex items-center gap-2 font-heading text-lg font-semibold text-primary-dark">

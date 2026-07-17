@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { CheckCircle, MagnifyingGlass, Wallet } from '@phosphor-icons/react'
 import PortalLayout from '../components/layout/PortalLayout.jsx'
 import { useNasabahDetail, useNasabahSearch } from '../hooks/useNasabah.js'
+import Seo from '../components/Seo.jsx'
 
 const currency = new Intl.NumberFormat('id-ID', {
   style: 'currency',
@@ -20,6 +21,10 @@ export default function BankSampahPortalPage() {
 
   return (
     <PortalLayout crumbs={[{ label: 'Bank Sampah' }]}>
+      <Seo
+        title="Cek Saldo & Riwayat Tabungan"
+        description="Cek saldo tabungan dan riwayat setoran sampah untuk nasabah Bank Sampah Digital Dusun Karangasem, cukup dengan nama atau nomor anggota."
+      />
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
         <span className="inline-flex items-center gap-2 rounded-full bg-moss px-4 py-1.5 text-sm font-medium text-primary-dark">
           <Wallet size={18} weight="bold" />

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Leaf, Lock, Warning } from '@phosphor-icons/react'
 import { useAuth } from '../../context/AuthContext.jsx'
+import Seo from '../../components/Seo.jsx'
 
 export default function AdminLoginPage() {
   const { status, login } = useAuth()
@@ -33,6 +34,7 @@ export default function AdminLoginPage() {
 
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background px-4">
+      <Seo title="Masuk Admin" noindex />
       <div className="w-full max-w-sm rounded-3xl border border-border bg-white p-8 shadow-sm">
         <div className="flex items-center gap-2 font-heading text-lg font-semibold text-primary-dark">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white">

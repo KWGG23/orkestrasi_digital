@@ -3,6 +3,7 @@ import { ArrowLeft, CalendarBlank, Images } from '@phosphor-icons/react'
 import PortalLayout from '../components/layout/PortalLayout.jsx'
 import { useKegiatanKknDetail } from '../hooks/useKegiatanKknDetail.js'
 import { storageUrl } from '../lib/api.js'
+import Seo from '../components/Seo.jsx'
 
 export default function KegiatanKknDetailPage() {
   const { tahun } = useParams()
@@ -21,6 +22,7 @@ export default function KegiatanKknDetailPage() {
   if (isError || !kegiatan) {
     return (
       <PortalLayout crumbs={[{ label: 'Kegiatan KKN', to: '/#kegiatan-kkn' }, { label: 'Tidak ditemukan' }]}>
+        <Seo title="Dokumentasi Tidak Ditemukan" noindex />
         <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6">
           <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
             <CalendarBlank size={30} weight="duotone" />
@@ -47,6 +49,11 @@ export default function KegiatanKknDetailPage() {
 
   return (
     <PortalLayout crumbs={[{ label: 'Kegiatan KKN', to: '/#kegiatan-kkn' }, { label: kegiatan.judul }]}>
+      <Seo
+        title={kegiatan.judul}
+        description={kegiatan.deskripsi || `Dokumentasi kegiatan KKN tahun ${kegiatan.tahun} di Desa Blongkeng.`}
+        image={foto[0] ? storageUrl(foto[0]) : undefined}
+      />
       <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
         <span className="inline-flex items-center gap-2 rounded-full bg-moss px-4 py-1.5 text-sm font-medium text-primary-dark">
           <CalendarBlank size={18} weight="bold" />

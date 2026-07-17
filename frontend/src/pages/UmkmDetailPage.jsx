@@ -12,6 +12,7 @@ import {
 import PortalLayout from '../components/layout/PortalLayout.jsx'
 import { useUmkmDetail } from '../hooks/useUmkmDetail.js'
 import { storageUrl } from '../lib/api.js'
+import Seo from '../components/Seo.jsx'
 
 const KATEGORI_LABEL = {
   kuliner: 'Kuliner',
@@ -41,6 +42,7 @@ export default function UmkmDetailPage() {
   if (isLoading) {
     return (
       <PortalLayout crumbs={[{ label: 'Katalog UMKM', to: '/portal/umkm' }, { label: 'Memuat…' }]}>
+        <Seo title="Memuat…" noindex />
         <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6">
           <p className="text-sm text-muted">Memuat data UMKM…</p>
         </div>
@@ -51,6 +53,7 @@ export default function UmkmDetailPage() {
   if (isError || !umkm) {
     return (
       <PortalLayout crumbs={[{ label: 'Katalog UMKM', to: '/portal/umkm' }, { label: 'Tidak ditemukan' }]}>
+        <Seo title="UMKM Tidak Ditemukan" noindex />
         <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6">
           <h1 className="font-heading text-2xl font-semibold text-primary-dark">UMKM tidak ditemukan</h1>
           <Link to="/portal/umkm" className="mt-6 inline-block font-semibold text-primary hover:text-primary-dark">
@@ -69,6 +72,11 @@ export default function UmkmDetailPage() {
 
   return (
     <PortalLayout crumbs={[{ label: 'Katalog UMKM', to: '/portal/umkm' }, { label: umkm.nama_usaha }]}>
+      <Seo
+        title={umkm.nama_usaha}
+        description={umkm.deskripsi || `${umkm.nama_usaha} — UMKM ${KATEGORI_LABEL[umkm.kategori] ?? umkm.kategori} di ${DUSUN_LABEL[umkm.dusun] ?? umkm.dusun}.`}
+        image={foto ?? undefined}
+      />
       <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
         <div className="flex h-56 items-center justify-center overflow-hidden rounded-3xl bg-moss sm:h-72">
           {foto ? (

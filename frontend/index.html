@@ -4,10 +4,15 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Desa Digital Karangasem — Bank Sampah Digital dan Portal Desa yang menghubungkan setoran sampah dengan tabungan warga dan katalog UMKM Dusun Karangasem & Blongkeng."
-    />
+    <!--
+      description dan tag SEO lain sengaja tidak ditulis statis di sini —
+      semuanya di-set dinamis per halaman lewat komponen <Seo> (react-helmet-async,
+      lihat src/components/Seo.jsx). Menulis meta description di sini juga akan
+      bikin duplikat: react-helmet-async cuma mengelola tag yang dia sendiri
+      pasang, jadi tag statis di HTML ini tidak akan pernah ke-replace/ke-hapus,
+      dan crawler/scraper yang ambil <meta name="description"> pertama di DOM
+      akan selalu dapat versi generik ini, bukan yang spesifik per halaman.
+    -->
     <title>Desa Digital Karangasem — Bank Sampah &amp; Portal Desa</title>
   </head>
   <body>

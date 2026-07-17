@@ -1,12 +1,14 @@
 import PortalLayout from '../layout/PortalLayout.jsx'
 import GeoMap from './GeoMap.jsx'
 import { useGeoLayer } from '../../hooks/useGeoLayer.js'
+import Seo from '../Seo.jsx'
 
 export default function MapPageLayout({ crumbLabel, icon: Icon, title, description, layer, layerColor, sourceNote }) {
   const { data, isLoading } = useGeoLayer(layer)
 
   return (
     <PortalLayout crumbs={[{ label: crumbLabel }]}>
+      <Seo title={title} description={description} />
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <span className="inline-flex items-center gap-2 rounded-full bg-moss px-4 py-1.5 text-sm font-medium text-primary-dark">
           <Icon size={18} weight="bold" />
