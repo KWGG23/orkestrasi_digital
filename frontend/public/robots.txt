@@ -2,6 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 
-# TODO: ganti ke domain asli setelah deploy ke Vercel, lalu submit sitemap ini
-# juga secara manual ke Google Search Console.
-Sitemap: https://desa-digital-karangasem.vercel.app/sitemap.xml
+Sitemap: https://nawassena.net/sitemap.xml

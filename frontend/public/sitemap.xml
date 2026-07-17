@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  TODO: ganti https://desa-digital-karangasem.vercel.app ke domain asli
-  setelah deploy. Halaman detail UMKM (/portal/umkm/:id) dan kegiatan KKN
+  Halaman detail UMKM (/portal/umkm/:id) dan kegiatan KKN
   (/portal/kegiatan/:tahun) sengaja tidak dimasukkan di sini karena datanya
   dinamis dari database -- Google tetap bisa menemukannya lewat link dari
   halaman katalog/portal. Kalau perlu, ini bisa diganti sitemap yang
@@ -9,32 +8,32 @@
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://desa-digital-karangasem.vercel.app/portal</loc>
+    <loc>https://nawassena.net/portal</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://desa-digital-karangasem.vercel.app/portal/umkm</loc>
+    <loc>https://nawassena.net/portal/umkm</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://desa-digital-karangasem.vercel.app/portal/profil/karangasem</loc>
+    <loc>https://nawassena.net/portal/profil/karangasem</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://desa-digital-karangasem.vercel.app/portal/profil/blongkeng</loc>
+    <loc>https://nawassena.net/portal/profil/blongkeng</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://desa-digital-karangasem.vercel.app/portal/peta/administratif</loc>
+    <loc>https://nawassena.net/portal/peta/administratif</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://desa-digital-karangasem.vercel.app/portal/bank-sampah</loc>
+    <loc>https://nawassena.net/portal/bank-sampah</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
