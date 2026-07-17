@@ -4,14 +4,18 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class JenisSampahSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        // Schema::disable/enableForeignKeyConstraints() = padanan lintas-driver
+        // dari SET FOREIGN_KEY_CHECKS -- versi mentahnya cuma jalan di MySQL,
+        // bikin truncate() gagal (syntax error) di SQLite (dipakai CI/E2E).
+        Schema::disableForeignKeyConstraints();
         DB::table('jenis_sampahs')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        Schema::enableForeignKeyConstraints();
 
         $now = now();
 
