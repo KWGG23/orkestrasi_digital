@@ -322,9 +322,11 @@ php artisan db:seed --class=AdminSeeder          # user admin default
 php artisan db:seed --class=DummyNasabahSeeder  # dev only
 ```
 
-Kredensial admin default (development):
-- Email: `admin@desadijital.id`
-- Password: `password`
+Kredensial admin diatur lewat env var `ADMIN_DEFAULT_EMAIL` / `ADMIN_DEFAULT_PASSWORD`
+(lihat `.env.example`). Di local/testing boleh dikosongkan (AdminSeeder pakai
+password dev default), tapi **wajib diisi eksplisit** di staging/production —
+seeder akan menolak jalan kalau `ADMIN_DEFAULT_PASSWORD` kosong di luar
+local/testing.
 
 ---
 
