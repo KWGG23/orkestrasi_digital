@@ -23,14 +23,14 @@ class LaporanController extends Controller
             ->get();
 
         return $this->success([
-            'tanggal'     => $tanggal,
-            'total_nota'  => $setorans->count(),
+            'tanggal' => $tanggal,
+            'total_nota' => $setorans->count(),
             'total_harga' => $setorans->sum('total_harga'),
-            'per_metode'  => $setorans->groupBy('metode')->map(fn ($g) => [
+            'per_metode' => $setorans->groupBy('metode')->map(fn ($g) => [
                 'jumlah_nota' => $g->count(),
                 'total_harga' => $g->sum('total_harga'),
             ]),
-            'setorans'    => $setorans->values(),
+            'setorans' => $setorans->values(),
         ]);
     }
 
@@ -46,14 +46,14 @@ class LaporanController extends Controller
             ->get();
 
         return $this->success([
-            'bulan'       => $bulan,
-            'total_nota'  => $setorans->count(),
+            'bulan' => $bulan,
+            'total_nota' => $setorans->count(),
             'total_harga' => $setorans->sum('total_harga'),
-            'per_metode'  => $setorans->groupBy('metode')->map(fn ($g) => [
+            'per_metode' => $setorans->groupBy('metode')->map(fn ($g) => [
                 'jumlah_nota' => $g->count(),
                 'total_harga' => $g->sum('total_harga'),
             ]),
-            'per_hari'    => $setorans
+            'per_hari' => $setorans
                 ->groupBy(fn ($s) => $s->tanggal->format('Y-m-d'))
                 ->map(fn ($g) => [
                     'jumlah_nota' => $g->count(),

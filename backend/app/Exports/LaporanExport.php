@@ -5,11 +5,11 @@ namespace App\Exports;
 use App\Models\Setoran;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class LaporanExport implements FromCollection, WithHeadings, WithTitle, WithStyles
+class LaporanExport implements FromCollection, WithHeadings, WithStyles, WithTitle
 {
     public function __construct(private string $bulan) {}
 
@@ -40,7 +40,7 @@ class LaporanExport implements FromCollection, WithHeadings, WithTitle, WithStyl
 
     public function title(): string
     {
-        return 'Laporan ' . $this->bulan;
+        return 'Laporan '.$this->bulan;
     }
 
     public function styles(Worksheet $sheet): array

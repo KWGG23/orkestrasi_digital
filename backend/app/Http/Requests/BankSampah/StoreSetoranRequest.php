@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\BankSampah;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreSetoranRequest extends FormRequest
@@ -18,13 +17,13 @@ class StoreSetoranRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id_nasabah'              => 'required|exists:nasabah,id',
-            'tanggal'                 => 'required|date',
-            'metode'                  => 'required|in:tunai,tabung,tukar_barang',
-            'catatan'                 => 'nullable|string|max:500',
-            'items'                   => 'required|array|min:1',
+            'id_nasabah' => 'required|exists:nasabah,id',
+            'tanggal' => 'required|date',
+            'metode' => 'required|in:tunai,tabung,tukar_barang',
+            'catatan' => 'nullable|string|max:500',
+            'items' => 'required|array|min:1',
             'items.*.id_jenis_sampah' => 'required|exists:jenis_sampahs,id',
-            'items.*.berat_kg'        => 'required|numeric|min:0.001',
+            'items.*.berat_kg' => 'required|numeric|min:0.001',
         ];
     }
 }

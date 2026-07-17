@@ -42,19 +42,19 @@ class SetoranController extends Controller
 
                     $detailItems[] = [
                         'id_jenis_sampah' => $item['id_jenis_sampah'],
-                        'berat_kg'        => $item['berat_kg'],
-                        'harga_satuan'    => $harga,
-                        'subtotal'        => $subtotal,
+                        'berat_kg' => $item['berat_kg'],
+                        'harga_satuan' => $harga,
+                        'subtotal' => $subtotal,
                     ];
                 }
 
                 $setoran = Setoran::create([
-                    'no_nota'     => $this->generateNoNota(),
-                    'id_nasabah'  => $nasabah->id,
-                    'tanggal'     => $request->tanggal,
+                    'no_nota' => $this->generateNoNota(),
+                    'id_nasabah' => $nasabah->id,
+                    'tanggal' => $request->tanggal,
                     'total_harga' => $totalHarga,
-                    'metode'      => $request->metode,
-                    'catatan'     => $request->catatan,
+                    'metode' => $request->metode,
+                    'catatan' => $request->catatan,
                 ]);
 
                 foreach ($detailItems as $detail) {
@@ -92,15 +92,15 @@ class SetoranController extends Controller
 
     private function generateNoNota(): string
     {
-        $prefix = 'NOT-' . now()->format('Ymd') . '-';
+        $prefix = 'NOT-'.now()->format('Ymd').'-';
 
-        $last = Setoran::where('no_nota', 'like', $prefix . '%')
+        $last = Setoran::where('no_nota', 'like', $prefix.'%')
             ->orderBy('no_nota', 'desc')
             ->lockForUpdate()
             ->first();
 
         $seq = $last ? ((int) substr($last->no_nota, -4)) + 1 : 1;
 
-        return $prefix . str_pad($seq, 4, '0', STR_PAD_LEFT);
+        return $prefix.str_pad($seq, 4, '0', STR_PAD_LEFT);
     }
 }

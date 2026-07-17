@@ -15,9 +15,9 @@ class DetailSetoran extends Model
     ];
 
     protected $casts = [
-        'berat_kg'    => 'decimal:3',
+        'berat_kg' => 'decimal:3',
         'harga_satuan' => 'decimal:2',
-        'subtotal'    => 'decimal:2',
+        'subtotal' => 'decimal:2',
     ];
 
     public function setoran()

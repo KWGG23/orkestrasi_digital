@@ -17,10 +17,10 @@ class StorePengumumanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'judul'           => 'required|string|max:255',
-            'isi'             => 'required|string',
+            'judul' => 'required|string|max:255',
+            'isi' => 'required|string',
             'tanggal_publish' => 'required|date',
-            'aktif'           => 'sometimes|boolean',
+            'aktif' => 'sometimes|boolean',
         ];
     }
 }

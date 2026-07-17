@@ -27,14 +27,14 @@ class TabunganController extends Controller
 
         return $this->success(
             [
-                'nasabah'   => $nasabah->only(['id', 'nama', 'no_anggota', 'saldo_tabungan']),
+                'nasabah' => $nasabah->only(['id', 'nama', 'no_anggota', 'saldo_tabungan']),
                 'transaksi' => $riwayat->items(),
             ],
             'OK',
             200,
             [
-                'total'     => $riwayat->total(),
-                'page'      => $riwayat->currentPage(),
+                'total' => $riwayat->total(),
+                'page' => $riwayat->currentPage(),
                 'last_page' => $riwayat->lastPage(),
             ]
         );

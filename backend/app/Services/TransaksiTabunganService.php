@@ -20,13 +20,13 @@ class TransaksiTabunganService
             $saldoBaru = $nasabah->saldo_tabungan + $setoran->total_harga;
 
             $transaksi = TransaksiTabungan::create([
-                'id_nasabah'    => $nasabah->id,
-                'id_setoran'    => $setoran->id,
-                'jenis'         => 'masuk',
-                'jumlah'        => $setoran->total_harga,
+                'id_nasabah' => $nasabah->id,
+                'id_setoran' => $setoran->id,
+                'jenis' => 'masuk',
+                'jumlah' => $setoran->total_harga,
                 'saldo_sesudah' => $saldoBaru,
-                'keterangan'    => 'Setoran sampah nota ' . $setoran->no_nota,
-                'tanggal'       => $setoran->tanggal,
+                'keterangan' => 'Setoran sampah nota '.$setoran->no_nota,
+                'tanggal' => $setoran->tanggal,
             ]);
 
             $nasabah->update(['saldo_tabungan' => $saldoBaru]);
@@ -50,13 +50,13 @@ class TransaksiTabunganService
             $saldoBaru = $nasabah->saldo_tabungan - $jumlah;
 
             $transaksi = TransaksiTabungan::create([
-                'id_nasabah'    => $nasabah->id,
-                'id_setoran'    => null,
-                'jenis'         => 'keluar',
-                'jumlah'        => $jumlah,
+                'id_nasabah' => $nasabah->id,
+                'id_setoran' => null,
+                'jenis' => 'keluar',
+                'jumlah' => $jumlah,
                 'saldo_sesudah' => $saldoBaru,
-                'keterangan'    => $keterangan ?: 'Penarikan tabungan',
-                'tanggal'       => now()->toDateString(),
+                'keterangan' => $keterangan ?: 'Penarikan tabungan',
+                'tanggal' => now()->toDateString(),
             ]);
 
             $nasabah->update(['saldo_tabungan' => $saldoBaru]);

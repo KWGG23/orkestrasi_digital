@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Portal;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 
 class LayerController extends Controller
@@ -20,12 +21,12 @@ class LayerController extends Controller
     /**
      * Gabungkan satu atau dua file GeoJSON menjadi satu FeatureCollection.
      */
-    private function serveGeojson(string ...$filenames): \Illuminate\Http\JsonResponse
+    private function serveGeojson(string ...$filenames): JsonResponse
     {
         $features = [];
 
         foreach ($filenames as $filename) {
-            $path = 'geojson/' . $filename;
+            $path = 'geojson/'.$filename;
 
             if (! Storage::disk('public')->exists($path)) {
                 continue;
@@ -39,7 +40,7 @@ class LayerController extends Controller
         }
 
         return response()->json([
-            'type'     => 'FeatureCollection',
+            'type' => 'FeatureCollection',
             'features' => $features,
         ]);
     }

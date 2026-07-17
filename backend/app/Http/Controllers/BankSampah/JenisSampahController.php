@@ -27,7 +27,7 @@ class JenisSampahController extends Controller
 
         $validated = $request->validate([
             'harga_per_satuan' => 'required|numeric|min:0',
-            'aktif'            => 'sometimes|boolean',
+            'aktif' => 'sometimes|boolean',
         ]);
 
         $jenis->update($validated);

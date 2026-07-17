@@ -21,7 +21,7 @@ class ProfilDusunController extends Controller
 
         if (! $profil) {
             return $this->success([
-                'dusun'  => $dusun,
+                'dusun' => $dusun,
                 'konten' => null,
             ], 'Profil belum tersedia');
         }

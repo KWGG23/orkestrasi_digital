@@ -17,6 +17,6 @@ class KegiatanKkn extends Model
 
     protected $casts = [
         'tahun' => 'integer',
-        'foto'  => 'array',
+        'foto' => 'array',
     ];
 }

@@ -17,10 +17,10 @@ class UpdatePengumumanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'judul'           => 'sometimes|string|max:255',
-            'isi'             => 'sometimes|string',
+            'judul' => 'sometimes|string|max:255',
+            'isi' => 'sometimes|string',
             'tanggal_publish' => 'sometimes|date',
-            'aktif'           => 'sometimes|boolean',
+            'aktif' => 'sometimes|boolean',
         ];
     }
 }

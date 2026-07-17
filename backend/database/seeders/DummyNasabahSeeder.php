@@ -25,15 +25,15 @@ class DummyNasabahSeeder extends Seeder
         $now = now();
         foreach ($nasabah as $data) {
             DB::table('nasabah')->insertOrIgnore([
-                'nama'            => $data['nama'],
-                'no_anggota'      => $data['no_anggota'],
-                'alamat'          => 'Dusun Karangasem, Muntilan',
-                'rt'              => $data['rt'],
-                'rw'              => $data['rw'],
-                'no_hp'           => $data['no_hp'],
-                'saldo_tabungan'  => 0,
-                'created_at'      => $now,
-                'updated_at'      => $now,
+                'nama' => $data['nama'],
+                'no_anggota' => $data['no_anggota'],
+                'alamat' => 'Dusun Karangasem, Muntilan',
+                'rt' => $data['rt'],
+                'rw' => $data['rw'],
+                'no_hp' => $data['no_hp'],
+                'saldo_tabungan' => 0,
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
         }
     }

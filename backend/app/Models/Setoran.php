@@ -16,7 +16,7 @@ class Setoran extends Model
     ];
 
     protected $casts = [
-        'tanggal'     => 'date',
+        'tanggal' => 'date',
         'total_harga' => 'decimal:2',
     ];
 

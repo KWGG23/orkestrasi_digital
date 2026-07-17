@@ -17,9 +17,9 @@ class TransaksiTabungan extends Model
     ];
 
     protected $casts = [
-        'jumlah'        => 'decimal:2',
+        'jumlah' => 'decimal:2',
         'saldo_sesudah' => 'decimal:2',
-        'tanggal'       => 'date',
+        'tanggal' => 'date',
     ];
 
     public function nasabah()

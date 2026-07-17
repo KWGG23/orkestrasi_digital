@@ -11,7 +11,7 @@ trait ApiResponse
         $response = [
             'success' => true,
             'message' => $message,
-            'data'    => $data,
+            'data' => $data,
         ];
 
         if (! empty($meta)) {

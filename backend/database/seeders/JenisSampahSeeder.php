@@ -88,7 +88,7 @@ class JenisSampahSeeder extends Seeder
 
         foreach ($data as $item) {
             DB::table('jenis_sampahs')->insert(array_merge($item, [
-                'aktif'      => true,
+                'aktif' => true,
                 'created_at' => $now,
                 'updated_at' => $now,
             ]));
