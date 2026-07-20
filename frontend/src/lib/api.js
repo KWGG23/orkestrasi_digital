@@ -84,6 +84,10 @@ export async function apiDownload(path, params = {}, token = null, filename = 'd
 
 export function storageUrl(path) {
   if (!path) return null
+  // Backend sudah mengembalikan URL absolut (lihat UmkmController::withFotoUrl) --
+  // teruskan apa adanya. Fallback path relatif dipertahankan untuk kompatibilitas
+  // field lama yang belum melalui transform itu (mis. foto kegiatan KKN).
+  if (/^https?:\/\//i.test(path)) return path
   const origin = API_BASE_URL.replace(/\/api\/v1\/?$/, '')
   return `${origin}/storage/${path}`
 }

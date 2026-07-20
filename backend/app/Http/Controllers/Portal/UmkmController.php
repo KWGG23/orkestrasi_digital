@@ -38,7 +38,7 @@ class UmkmController extends Controller
         $umkm = $query->orderBy('nama_usaha')->paginate(20);
 
         return $this->success(
-            $umkm->items(),
+            collect($umkm->items())->map(fn ($item) => $this->withFotoUrl($item))->all(),
             'OK',
             200,
             [
@@ -53,7 +53,7 @@ class UmkmController extends Controller
     {
         $umkm = Umkm::findOrFail($id);
 
-        return $this->success($umkm);
+        return $this->success($this->withFotoUrl($umkm));
     }
 
     public function store(StoreUmkmRequest $request)
@@ -73,7 +73,7 @@ class UmkmController extends Controller
 
         $umkm = Umkm::create($data);
 
-        return $this->success($umkm->fresh(), 'UMKM berhasil ditambahkan', 201);
+        return $this->success($this->withFotoUrl($umkm->fresh()), 'UMKM berhasil ditambahkan', 201);
     }
 
     public function update(UpdateUmkmRequest $request, string $id)
@@ -98,7 +98,7 @@ class UmkmController extends Controller
 
         $umkm->update($data);
 
-        return $this->success($umkm->fresh(), 'UMKM berhasil diperbarui');
+        return $this->success($this->withFotoUrl($umkm->fresh()), 'UMKM berhasil diperbarui');
     }
 
     public function destroy(string $id)
@@ -113,6 +113,23 @@ class UmkmController extends Controller
         $umkm->delete();
 
         return $this->success(null, 'UMKM berhasil dihapus');
+    }
+
+    // foto_usaha/foto_produk disimpan di DB sebagai path relatif (mis.
+    // "umkm/xxx.png"), bukan URL -- frontend butuh URL absolut buat nampilin
+    // <img>. Storage::disk('public')->url() otomatis nyesuain, entah lagi
+    // pakai driver 'local' (URL relatif ke APP_URL) atau 's3'/Supabase (URL
+    // Supabase asli), jadi frontend nggak perlu tau/nebak driver apa yang aktif.
+    private function withFotoUrl(Umkm $umkm): array
+    {
+        $data = $umkm->toArray();
+        $data['foto_usaha'] = $umkm->foto_usaha ? Storage::disk('public')->url($umkm->foto_usaha) : null;
+        $data['foto_produk'] = collect($umkm->foto_produk)
+            ->map(fn ($path) => Storage::disk('public')->url($path))
+            ->values()
+            ->all();
+
+        return $data;
     }
 
     private function simpanFoto($file): string
