@@ -59,14 +59,14 @@ export default function AdminLayout({ children }) {
           </div>
         </div>
 
-        <nav className="mx-auto flex max-w-6xl gap-1 px-4 pb-2 sm:px-6">
+        <nav className="mx-auto flex max-w-6xl gap-1 overflow-x-auto scrollbar-none px-4 pb-2 sm:px-6">
           {NAV_LINKS.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}
               end={end}
               className={({ isActive }) =>
-                `flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+                `flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 ${
                   isActive ? 'bg-moss text-primary-dark' : 'text-bark/70 hover:bg-moss/60 hover:text-primary-dark'
                 }`
               }
