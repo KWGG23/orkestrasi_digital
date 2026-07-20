@@ -46,7 +46,13 @@ return [
         // (lihat FILESYSTEM_PUBLIC_DRIVER di .env.example).
         'public' => [
             'driver' => env('FILESYSTEM_PUBLIC_DRIVER', 'local'),
-            'root' => storage_path('app/public'),
+            // 'root' cuma masuk akal buat driver 'local' (path filesystem asli).
+            // Kalau dipaksa sama-sama dipakai untuk driver 's3', Laravel
+            // memperlakukannya sebagai prefix folder DI DALAM bucket -- path
+            // absolut container (/var/www/html/storage/app/public) bakal
+            // ke-embed jadi bagian object key di Supabase, bikin file ke-upload
+            // di key yang salah dan URL publiknya 400.
+            'root' => env('FILESYSTEM_PUBLIC_DRIVER', 'local') === 's3' ? '' : storage_path('app/public'),
             'url' => env('AWS_URL', rtrim(env('APP_URL', 'http://localhost'), '/').'/storage'),
             'visibility' => 'public',
             'throw' => false,
