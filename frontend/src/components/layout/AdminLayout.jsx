@@ -12,15 +12,19 @@ import {
   Wallet,
 } from '@phosphor-icons/react'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { adminHomePath, ROLE_DESA } from '../../lib/adminRoles.js'
 import Seo from '../Seo.jsx'
 
-const NAV_LINKS = [
+const NAV_LINKS_BANK_SAMPAH = [
   { to: '/admin', label: 'Dashboard', icon: SquaresFour, end: true },
   { to: '/admin/setoran', label: 'Setoran Baru', icon: Receipt },
   { to: '/admin/tabungan', label: 'Tabungan', icon: Wallet },
   { to: '/admin/jenis-sampah', label: 'Harga Sampah', icon: Recycle },
   { to: '/admin/laporan', label: 'Laporan', icon: FileText },
-  { to: '/admin/umkm', label: 'UMKM', icon: Storefront },
+]
+
+const NAV_LINKS_DESA = [
+  { to: '/admin/umkm', label: 'UMKM', icon: Storefront, end: true },
   { to: '/admin/profil', label: 'Profil Dusun', icon: Buildings },
   { to: '/admin/pengumuman', label: 'Pengumuman', icon: Megaphone },
 ]
@@ -28,6 +32,9 @@ const NAV_LINKS = [
 export default function AdminLayout({ children }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+
+  const isAdminDesa = user?.role === ROLE_DESA
+  const navLinks = isAdminDesa ? NAV_LINKS_DESA : NAV_LINKS_BANK_SAMPAH
 
   async function handleLogout() {
     await logout()
@@ -39,11 +46,14 @@ export default function AdminLayout({ children }) {
       <Seo title="Admin" noindex />
       <header className="sticky top-0 z-50 border-b border-border/70 bg-white/90 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-          <Link to="/admin" className="flex items-center gap-2 font-heading text-lg font-semibold text-primary-dark">
+          <Link
+            to={adminHomePath(user?.role)}
+            className="flex items-center gap-2 font-heading text-lg font-semibold text-primary-dark"
+          >
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white">
               <Leaf size={20} weight="fill" />
             </span>
-            Admin Bank Sampah
+            {isAdminDesa ? 'Admin Desa' : 'Admin Bank Sampah'}
           </Link>
 
           <div className="flex items-center gap-4">
@@ -60,7 +70,7 @@ export default function AdminLayout({ children }) {
         </div>
 
         <nav className="mx-auto flex max-w-6xl gap-1 overflow-x-auto scrollbar-none px-4 pb-2 sm:px-6">
-          {NAV_LINKS.map(({ to, label, icon: Icon, end }) => (
+          {navLinks.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}

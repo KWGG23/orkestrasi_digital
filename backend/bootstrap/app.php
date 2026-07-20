@@ -18,6 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // Tanpa ini, Authenticate::redirectTo() memanggil route('login') dan
         // crash dengan RouteNotFoundException alih-alih melempar 401 biasa.
         Authenticate::redirectUsing(fn () => null);
+
+        $middleware->alias([
+            'role' => \App\Http\Middleware\EnsureRole::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // API-only backend — tidak ada rute 'login' web, jadi selalu balas JSON

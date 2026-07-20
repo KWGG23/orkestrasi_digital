@@ -43,6 +43,7 @@ export function AuthProvider({ children }) {
     setToken(data.token)
     setUser(data.user)
     setStatus('authenticated')
+    return data.user
   }
 
   async function logout() {

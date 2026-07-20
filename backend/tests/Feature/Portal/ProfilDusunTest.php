@@ -55,7 +55,7 @@ class ProfilDusunTest extends TestCase
 
     public function test_admin_bisa_membuat_profil_dusun_baru(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
 
         $response = $this->putJson('/api/v1/profil/karangasem', [
             'konten' => ['sejarah' => 'Dusun Karangasem terbentuk sejak lama.', 'jumlah_kk' => 120],
@@ -71,7 +71,7 @@ class ProfilDusunTest extends TestCase
 
     public function test_admin_bisa_memperbarui_profil_dusun_yang_sudah_ada(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
         ProfilDusun::create(['dusun' => 'karangasem', 'konten' => ['jumlah_kk' => 100]]);
 
         $response = $this->putJson('/api/v1/profil/karangasem', [
@@ -86,7 +86,7 @@ class ProfilDusunTest extends TestCase
 
     public function test_update_profil_dengan_nama_dusun_tidak_valid_menghasilkan_404(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
 
         $response = $this->putJson('/api/v1/profil/kaweron', [
             'konten' => ['sejarah' => 'Percobaan nama lama'],
@@ -98,7 +98,7 @@ class ProfilDusunTest extends TestCase
 
     public function test_update_profil_tanpa_konten_gagal_validasi(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
 
         $response = $this->putJson('/api/v1/profil/karangasem', []);
 
@@ -107,7 +107,7 @@ class ProfilDusunTest extends TestCase
 
     public function test_update_profil_dengan_konten_bukan_array_gagal_validasi(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
 
         $response = $this->putJson('/api/v1/profil/karangasem', [
             'konten' => 'ini string, bukan objek/array',
@@ -118,7 +118,7 @@ class ProfilDusunTest extends TestCase
 
     public function test_kedua_dusun_punya_profil_independen(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
 
         $this->putJson('/api/v1/profil/karangasem', ['konten' => ['jumlah_kk' => 120]]);
         $this->putJson('/api/v1/profil/blongkeng', ['konten' => ['jumlah_kk' => 80]]);

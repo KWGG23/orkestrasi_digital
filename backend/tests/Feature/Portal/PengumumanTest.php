@@ -58,7 +58,7 @@ class PengumumanTest extends TestCase
 
     public function test_admin_bisa_tambah_pengumuman(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
 
         $response = $this->postJson('/api/v1/pengumuman', [
             'judul' => 'Kerja Bakti Minggu Ini',
@@ -76,7 +76,7 @@ class PengumumanTest extends TestCase
 
     public function test_tambah_pengumuman_bisa_langsung_dibuat_nonaktif(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
 
         $response = $this->postJson('/api/v1/pengumuman', [
             'judul' => 'Draft Pengumuman',
@@ -91,7 +91,7 @@ class PengumumanTest extends TestCase
 
     public function test_tambah_pengumuman_tanpa_judul_gagal_validasi(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
 
         $response = $this->postJson('/api/v1/pengumuman', [
             'isi' => 'Isi tanpa judul',
@@ -103,7 +103,7 @@ class PengumumanTest extends TestCase
 
     public function test_tambah_pengumuman_dengan_tanggal_tidak_valid_gagal_validasi(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
 
         $response = $this->postJson('/api/v1/pengumuman', [
             'judul' => 'Judul',
@@ -128,7 +128,7 @@ class PengumumanTest extends TestCase
 
     public function test_admin_bisa_edit_sebagian_field_pengumuman(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
         $pengumuman = Pengumuman::factory()->create([
             'judul' => 'Judul Lama',
             'isi' => 'Isi Lama',
@@ -146,7 +146,7 @@ class PengumumanTest extends TestCase
 
     public function test_admin_bisa_menonaktifkan_pengumuman_lewat_edit(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
         $pengumuman = Pengumuman::factory()->create(['aktif' => true]);
 
         $this->putJson("/api/v1/pengumuman/{$pengumuman->id}", ['aktif' => false])
@@ -158,7 +158,7 @@ class PengumumanTest extends TestCase
 
     public function test_edit_pengumuman_yang_tidak_ada_menghasilkan_404(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
 
         $response = $this->putJson('/api/v1/pengumuman/99999', ['judul' => 'X']);
 
@@ -177,7 +177,7 @@ class PengumumanTest extends TestCase
 
     public function test_admin_bisa_hapus_pengumuman(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
         $pengumuman = Pengumuman::factory()->create();
 
         $response = $this->deleteJson("/api/v1/pengumuman/{$pengumuman->id}");
@@ -188,7 +188,7 @@ class PengumumanTest extends TestCase
 
     public function test_hapus_pengumuman_yang_tidak_ada_menghasilkan_404(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
 
         $response = $this->deleteJson('/api/v1/pengumuman/99999');
 

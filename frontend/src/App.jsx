@@ -30,13 +30,15 @@ function App() {
       <Route path="/portal/bank-sampah" element={<BankSampahPortalPage />} />
 
       <Route path="/admin/login" element={<AdminLoginPage />} />
-      <Route element={<RequireAuth />}>
+      <Route element={<RequireAuth role="admin_bank_sampah" />}>
         <Route path="/admin" element={<AdminDashboardPage />} />
         <Route path="/admin/setoran" element={<AdminSetoranPage />} />
         <Route path="/admin/tabungan" element={<AdminTabunganPage />} />
-        <Route path="/admin/umkm" element={<AdminUmkmPage />} />
         <Route path="/admin/jenis-sampah" element={<AdminJenisSampahPage />} />
         <Route path="/admin/laporan" element={<AdminLaporanPage />} />
+      </Route>
+      <Route element={<RequireAuth role="admin_desa" />}>
+        <Route path="/admin/umkm" element={<AdminUmkmPage />} />
         <Route path="/admin/profil" element={<AdminProfilDusunPage />} />
         <Route path="/admin/pengumuman" element={<AdminPengumumanPage />} />
       </Route>

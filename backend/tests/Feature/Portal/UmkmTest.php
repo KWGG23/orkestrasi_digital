@@ -91,7 +91,7 @@ class UmkmTest extends TestCase
 
     public function test_admin_bisa_tambah_umkm(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
 
         $response = $this->postJson('/api/v1/umkm', [
             'nama_usaha' => 'Warung Baru',
@@ -118,7 +118,7 @@ class UmkmTest extends TestCase
 
     public function test_tambah_umkm_dengan_dusun_tidak_valid_gagal_validasi(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
 
         $response = $this->postJson('/api/v1/umkm', [
             'nama_usaha' => 'Warung Baru',
@@ -132,7 +132,7 @@ class UmkmTest extends TestCase
 
     public function test_tambah_umkm_dengan_kategori_tidak_valid_gagal_validasi(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
 
         $response = $this->postJson('/api/v1/umkm', [
             'nama_usaha' => 'Warung Baru',
@@ -158,7 +158,7 @@ class UmkmTest extends TestCase
 
     public function test_admin_bisa_edit_umkm(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
         $umkm = Umkm::factory()->create(['nama_usaha' => 'Nama Lama', 'aktif' => true]);
 
         $response = $this->putJson("/api/v1/umkm/{$umkm->id}", [
@@ -183,7 +183,7 @@ class UmkmTest extends TestCase
 
     public function test_admin_bisa_hapus_umkm(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
         $umkm = Umkm::factory()->create();
 
         $response = $this->deleteJson("/api/v1/umkm/{$umkm->id}");
@@ -194,7 +194,7 @@ class UmkmTest extends TestCase
 
     public function test_upload_foto_usaha_diresize_maksimal_800px_dan_terhapus_saat_umkm_dihapus(): void
     {
-        Sanctum::actingAs(User::factory()->create());
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
 
         // Gambar sengaja dibuat lebih lebar dari 800px agar logika resize di controller teruji.
         $file = UploadedFile::fake()->image('usaha.jpg', 1600, 1200);
@@ -208,7 +208,13 @@ class UmkmTest extends TestCase
         ]);
 
         $response->assertStatus(201);
-        $path = $response->json('data.foto_usaha');
+        // data.foto_usaha di response API adalah URL absolut (lihat
+        // UmkmController::withFotoUrl) -- path relatif asli yang dipakai
+        // Storage::disk() cuma ada di kolom DB, bukan di response.
+        $this->assertStringContainsString('http', $response->json('data.foto_usaha'));
+
+        $umkmId = $response->json('data.id');
+        $path = Umkm::find($umkmId)->foto_usaha;
 
         $this->assertNotNull($path);
         $this->assertTrue(Storage::disk('public')->exists($path));
@@ -216,7 +222,6 @@ class UmkmTest extends TestCase
         [$width] = getimagesize(Storage::disk('public')->path($path));
         $this->assertLessThanOrEqual(800, $width);
 
-        $umkmId = $response->json('data.id');
         $this->deleteJson("/api/v1/umkm/{$umkmId}")->assertStatus(200);
 
         // hapusFoto() di controller harus benar-benar membuang file dari disk, bukan cuma baris DB.

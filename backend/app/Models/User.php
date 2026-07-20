@@ -14,6 +14,12 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
+    public const ROLE_BANK_SAMPAH = 'admin_bank_sampah';
+
+    public const ROLE_DESA = 'admin_desa';
+
+    public const ROLES = [self::ROLE_BANK_SAMPAH, self::ROLE_DESA];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -23,6 +29,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**

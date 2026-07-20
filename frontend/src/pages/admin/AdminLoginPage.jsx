@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Leaf, Lock, Warning } from '@phosphor-icons/react'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { adminHomePath } from '../../lib/adminRoles.js'
 import Seo from '../../components/Seo.jsx'
 
 export default function AdminLoginPage() {
-  const { status, login } = useAuth()
+  const { status, login, user } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -15,7 +16,7 @@ export default function AdminLoginPage() {
   const [submitting, setSubmitting] = useState(false)
 
   if (status === 'authenticated') {
-    return <Navigate to={location.state?.from?.pathname ?? '/admin'} replace />
+    return <Navigate to={location.state?.from?.pathname ?? adminHomePath(user?.role)} replace />
   }
 
   async function handleSubmit(e) {
@@ -23,8 +24,8 @@ export default function AdminLoginPage() {
     setError(null)
     setSubmitting(true)
     try {
-      await login(email, password)
-      navigate(location.state?.from?.pathname ?? '/admin', { replace: true })
+      const loggedInUser = await login(email, password)
+      navigate(location.state?.from?.pathname ?? adminHomePath(loggedInUser.role), { replace: true })
     } catch (err) {
       setError(err.message ?? 'Gagal masuk. Periksa email dan password.')
     } finally {
@@ -40,9 +41,9 @@ export default function AdminLoginPage() {
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white">
             <Leaf size={20} weight="fill" />
           </span>
-          Admin Bank Sampah
+          Admin Desa Digital
         </div>
-        <p className="mt-2 text-sm text-muted">Masuk untuk mengelola setoran dan tabungan nasabah.</p>
+        <p className="mt-2 text-sm text-muted">Masuk sebagai admin bank sampah atau admin desa.</p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>

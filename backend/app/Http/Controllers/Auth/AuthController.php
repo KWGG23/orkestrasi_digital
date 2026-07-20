@@ -31,7 +31,7 @@ class AuthController extends Controller
         $token = $user->createToken('admin-token')->plainTextToken;
 
         return $this->success([
-            'user' => $user->only(['id', 'name', 'email']),
+            'user' => $user->only(['id', 'name', 'email', 'role']),
             'token' => $token,
             'token_type' => 'Bearer',
         ], 'Login berhasil');
@@ -54,7 +54,7 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         return $this->success(
-            $request->user()->only(['id', 'name', 'email'])
+            $request->user()->only(['id', 'name', 'email', 'role'])
         );
     }
 }

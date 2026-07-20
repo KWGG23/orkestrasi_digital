@@ -38,8 +38,10 @@ Route::prefix('v1')->group(function () {
     // Tabungan — riwayat publik (self-service saldo), tarik tabungan admin only
     Route::get('tabungan/{nasabahId}', [TabunganController::class, 'show']);
 
-    // Admin-only routes (Sanctum) — aksi pengurus, bukan self-service warga
-    Route::middleware('auth:sanctum')->group(function () {
+    // Admin-only routes (Sanctum) — aksi pengurus, bukan self-service warga.
+    // role:admin_bank_sampah -- terpisah dari admin desa (lihat grup Portal
+    // Desa di bawah), masing-masing punya akun & scope sendiri.
+    Route::middleware(['auth:sanctum', 'role:'.\App\Models\User::ROLE_BANK_SAMPAH])->group(function () {
         Route::post('nasabah', [NasabahController::class, 'store']);
         Route::post('setoran', [SetoranController::class, 'store']);
         Route::post('tabungan/tarik', [TabunganController::class, 'tarik']);
@@ -67,8 +69,9 @@ Route::prefix('v1')->group(function () {
     Route::get('kegiatan-kkn', [KegiatanKknController::class, 'index']);
     Route::get('kegiatan-kkn/{tahun}', [KegiatanKknController::class, 'show']);
 
-    // Admin-only Portal (Sanctum)
-    Route::middleware('auth:sanctum')->group(function () {
+    // Admin-only Portal (Sanctum) -- role:admin_desa, akun terpisah dari admin
+    // bank sampah (lihat grup Bank Sampah di atas).
+    Route::middleware(['auth:sanctum', 'role:'.\App\Models\User::ROLE_DESA])->group(function () {
         Route::post('umkm', [UmkmController::class, 'store']);
         Route::put('umkm/{id}', [UmkmController::class, 'update']);
         Route::delete('umkm/{id}', [UmkmController::class, 'destroy']);
