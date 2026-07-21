@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft, Buildings, CalendarBlank, Images, MagnifyingGlassPlus, X } from '@phosphor-icons/react'
+import { ArrowLeft, Buildings, CalendarBlank, Images, X } from '@phosphor-icons/react'
 import PortalLayout from '../components/layout/PortalLayout.jsx'
 import { useKegiatanKknDetail } from '../hooks/useKegiatanKknDetail.js'
 import { storageUrl } from '../lib/api.js'
@@ -11,8 +11,13 @@ const DUSUN_LABELS = { karangasem: 'Karangasem', blongkeng: 'Blongkeng' }
 export default function KegiatanKknDetailPage() {
   const { tahun, dusun } = useParams()
   const { data: kegiatan, isLoading, isError } = useKegiatanKknDetail(tahun, dusun)
-  // Desktop: hover buka preview (mouse enter/leave). Mobile/tablet tidak
-  // punya hover, jadi tap toggle preview yang sama lewat onClick.
+  // Mobile/tablet tidak punya hover, jadi tap buka foto penuh lewat state ini.
+  // Desktop pakai hover CSS murni (group-hover di bawah), bukan state -- versi
+  // awal pakai overlay fixed full-screen yang muncul di onMouseEnter, tapi itu
+  // langsung menutupi posisi kursor sendiri sehingga mouseleave ke-trigger
+  // instan lalu overlay hilang lagi dst (glitch/flicker). CSS group-hover
+  // tidak kena masalah itu karena statusnya ngikutin elemen DOM yang di-hover,
+  // bukan re-render React yang bisa saling kejar dengan posisi kursor.
   const [previewFoto, setPreviewFoto] = useState(null)
 
   if (isLoading) {
@@ -100,23 +105,22 @@ export default function KegiatanKknDetailPage() {
               {foto.map((path) => {
                 const url = storageUrl(path)
                 return (
-                  <button
-                    key={path}
-                    type="button"
-                    onMouseEnter={() => setPreviewFoto(url)}
-                    onMouseLeave={() => setPreviewFoto(null)}
-                    onClick={() => setPreviewFoto((current) => (current === url ? null : url))}
-                    className="group relative h-40 w-full cursor-zoom-in overflow-hidden rounded-xl"
-                  >
-                    <img
-                      src={url}
-                      alt={kegiatan.judul}
-                      className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-110"
-                    />
-                    <span className="absolute inset-0 flex items-center justify-center bg-primary-dark/0 opacity-0 transition-all duration-300 group-hover:bg-primary-dark/20 group-hover:opacity-100">
-                      <MagnifyingGlassPlus size={24} weight="bold" className="text-white drop-shadow" />
-                    </span>
-                  </button>
+                  // z-0 + hover:z-20 di elemen INI (bukan gambar di dalamnya) supaya
+                  // seluruh sel ini terangkat di atas tetangga grid-nya saat foto
+                  // di dalamnya membesar keluar batas sel.
+                  <div key={path} className="group relative z-0 h-40 hover:z-20">
+                    <button
+                      type="button"
+                      onClick={() => setPreviewFoto((current) => (current === url ? null : url))}
+                      className="block h-full w-full cursor-zoom-in"
+                    >
+                      <img
+                        src={url}
+                        alt={kegiatan.judul}
+                        className="h-full w-full rounded-xl object-cover shadow-sm transition-all duration-300 ease-out group-hover:absolute group-hover:left-1/2 group-hover:top-1/2 group-hover:h-64 group-hover:w-64 group-hover:max-w-[85vw] group-hover:-translate-x-1/2 group-hover:-translate-y-1/2 group-hover:rounded-2xl group-hover:bg-white group-hover:object-contain group-hover:p-2 group-hover:shadow-2xl"
+                      />
+                    </button>
+                  </div>
                 )
               })}
             </div>
