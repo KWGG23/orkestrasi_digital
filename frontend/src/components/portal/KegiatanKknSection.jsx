@@ -1,5 +1,6 @@
 import { CalendarBlank, Images } from '@phosphor-icons/react'
 import { useKegiatanKknList } from '../../hooks/useKegiatanKknList.js'
+import { storageUrl } from '../../lib/api.js'
 import FeatureCard from './FeatureCard.jsx'
 import SectionHeading from './SectionHeading.jsx'
 
@@ -39,6 +40,7 @@ export default function KegiatanKknSection() {
                   description={kegiatan.deskripsi ?? 'Dokumentasi sedang disusun.'}
                   to={`/portal/kegiatan/${kegiatan.tahun}/${kegiatan.dusun}`}
                   badge={kegiatan.tahun}
+                  image={kegiatan.foto?.[0] ? storageUrl(kegiatan.foto[0]) : undefined}
                 />
               ))}
             </div>
