@@ -1,17 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Buildings } from "@phosphor-icons/react";
 import { useProfilDusun } from "../../hooks/useProfilDusun.js";
 import FeatureCard from "./FeatureCard.jsx";
 import SectionHeading from "./SectionHeading.jsx";
 
+// foto6.jpg sengaja tidak ada filenya di public/images/slider/ -- slide itu
+// selalu 404 dan muncul kosong tiap giliran auto-slide sampai ke situ.
 const slides = [
   "/images/slider/foto1.jpg",
   "/images/slider/foto2.jpg",
   "/images/slider/foto3.jpg",
   "/images/slider/foto4.jpg",
   "/images/slider/foto5.jpg",
-  "/images/slider/foto6.jpg",
 ];
+
+// Ambang jarak geser (px) sebelum dianggap swipe, bukan tap biasa.
+const SWIPE_THRESHOLD = 40;
 
 function badgeFor(query) {
   if (!query.isSuccess) return undefined;
@@ -25,6 +29,25 @@ export default function DusunProfileGrid() {
   const blongkeng = useProfilDusun("blongkeng");
 
   const [activeSlide, setActiveSlide] = useState(0);
+  // Pointer Events (bukan Touch Events) -- satu API yang sama buat jari di
+  // layar sentuh maupun mouse-drag di desktop, tanpa perlu urus TouchList.
+  const dragStartX = useRef(null);
+
+  function handlePointerDown(e) {
+    dragStartX.current = e.clientX;
+  }
+
+  function handlePointerUp(e) {
+    if (dragStartX.current === null) return;
+
+    const deltaX = e.clientX - dragStartX.current;
+    if (deltaX > SWIPE_THRESHOLD) {
+      setActiveSlide((prev) => (prev - 1 + slides.length) % slides.length);
+    } else if (deltaX < -SWIPE_THRESHOLD) {
+      setActiveSlide((prev) => (prev + 1) % slides.length);
+    }
+    dragStartX.current = null;
+  }
 
   const dusunCards = [
     {
@@ -84,6 +107,7 @@ export default function DusunProfileGrid() {
               relative
               flex
               h-[250px]
+              touch-pan-y
               items-center
               justify-center
               sm:h-[300px]
@@ -93,6 +117,8 @@ export default function DusunProfileGrid() {
             style={{
               perspective: "1200px",
             }}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
           >
             {slides.map((slide, index) => {
               const position = getPosition(index);
