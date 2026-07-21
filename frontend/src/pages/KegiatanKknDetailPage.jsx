@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft, Buildings, CalendarBlank, Images } from '@phosphor-icons/react'
+import { ArrowLeft, Buildings, CalendarBlank, Images, MagnifyingGlassPlus, X } from '@phosphor-icons/react'
 import PortalLayout from '../components/layout/PortalLayout.jsx'
 import { useKegiatanKknDetail } from '../hooks/useKegiatanKknDetail.js'
 import { storageUrl } from '../lib/api.js'
@@ -10,6 +11,9 @@ const DUSUN_LABELS = { karangasem: 'Karangasem', blongkeng: 'Blongkeng' }
 export default function KegiatanKknDetailPage() {
   const { tahun, dusun } = useParams()
   const { data: kegiatan, isLoading, isError } = useKegiatanKknDetail(tahun, dusun)
+  // Desktop: hover buka preview (mouse enter/leave). Mobile/tablet tidak
+  // punya hover, jadi tap toggle preview yang sama lewat onClick.
+  const [previewFoto, setPreviewFoto] = useState(null)
 
   if (isLoading) {
     return (
@@ -93,17 +97,52 @@ export default function KegiatanKknDetailPage() {
             </div>
           ) : (
             <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {foto.map((path) => (
-                <img
-                  key={path}
-                  src={storageUrl(path)}
-                  alt={kegiatan.judul}
-                  className="h-40 w-full rounded-xl object-cover"
-                />
-              ))}
+              {foto.map((path) => {
+                const url = storageUrl(path)
+                return (
+                  <button
+                    key={path}
+                    type="button"
+                    onMouseEnter={() => setPreviewFoto(url)}
+                    onMouseLeave={() => setPreviewFoto(null)}
+                    onClick={() => setPreviewFoto((current) => (current === url ? null : url))}
+                    className="group relative h-40 w-full cursor-zoom-in overflow-hidden rounded-xl"
+                  >
+                    <img
+                      src={url}
+                      alt={kegiatan.judul}
+                      className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-110"
+                    />
+                    <span className="absolute inset-0 flex items-center justify-center bg-primary-dark/0 opacity-0 transition-all duration-300 group-hover:bg-primary-dark/20 group-hover:opacity-100">
+                      <MagnifyingGlassPlus size={24} weight="bold" className="text-white drop-shadow" />
+                    </span>
+                  </button>
+                )
+              })}
             </div>
           )}
         </div>
+
+        {previewFoto && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-primary-dark/80 p-4 backdrop-blur-sm"
+            onClick={() => setPreviewFoto(null)}
+          >
+            <button
+              type="button"
+              onClick={() => setPreviewFoto(null)}
+              aria-label="Tutup"
+              className="absolute right-4 top-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+            >
+              <X size={20} weight="bold" />
+            </button>
+            <img
+              src={previewFoto}
+              alt={kegiatan.judul}
+              className="max-h-[90vh] max-w-[90vw] rounded-2xl object-contain shadow-2xl"
+            />
+          </div>
+        )}
 
         <div className="mt-8">
           <Link
