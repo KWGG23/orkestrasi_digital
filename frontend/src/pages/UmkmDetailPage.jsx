@@ -35,6 +35,17 @@ function Chip({ children }) {
   )
 }
 
+// Sebagian data lama diisi admin dengan tanda "-" sebagai placeholder untuk
+// field yang sebenarnya belum diisi (mis. belum punya Instagram) -- "-" itu
+// truthy/non-empty jadi lolos pengecekan falsy biasa. Field kosong beneran
+// (null/undefined/string kosong) maupun placeholder "-" sama-sama dianggap
+// belum diisi, supaya elemen yang menampilkannya nggak muncul di katalog.
+function hasValue(value) {
+  if (value === null || value === undefined) return false
+  const trimmed = String(value).trim()
+  return trimmed !== '' && trimmed !== '-'
+}
+
 export default function UmkmDetailPage() {
   const { id } = useParams()
   const { data: umkm, isLoading, isError } = useUmkmDetail(id)
@@ -68,7 +79,7 @@ export default function UmkmDetailPage() {
   const fotoProduk = umkm.foto_produk ?? []
   const produkUtama = umkm.produk_utama ?? []
   const metodeBayar = umkm.metode_bayar ?? []
-  const platformOnline = umkm.platform_online ?? []
+  const platformOnline = (umkm.platform_online ?? []).filter(hasValue)
 
   return (
     <PortalLayout crumbs={[{ label: 'Katalog UMKM', to: '/portal/umkm' }, { label: umkm.nama_usaha }]}>
@@ -190,7 +201,7 @@ export default function UmkmDetailPage() {
               Hubungi via WhatsApp
             </a>
           )}
-          {umkm.instagram && (
+          {hasValue(umkm.instagram) && (
             <a
               href={`https://instagram.com/${umkm.instagram.replace(/^@/, '')}`}
               target="_blank"
