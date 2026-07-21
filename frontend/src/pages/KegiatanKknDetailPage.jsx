@@ -1,13 +1,15 @@
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft, CalendarBlank, Images } from '@phosphor-icons/react'
+import { ArrowLeft, Buildings, CalendarBlank, Images } from '@phosphor-icons/react'
 import PortalLayout from '../components/layout/PortalLayout.jsx'
 import { useKegiatanKknDetail } from '../hooks/useKegiatanKknDetail.js'
 import { storageUrl } from '../lib/api.js'
 import Seo from '../components/Seo.jsx'
 
+const DUSUN_LABELS = { karangasem: 'Karangasem', blongkeng: 'Blongkeng' }
+
 export default function KegiatanKknDetailPage() {
-  const { tahun } = useParams()
-  const { data: kegiatan, isLoading, isError } = useKegiatanKknDetail(tahun)
+  const { tahun, dusun } = useParams()
+  const { data: kegiatan, isLoading, isError } = useKegiatanKknDetail(tahun, dusun)
 
   if (isLoading) {
     return (
@@ -31,7 +33,7 @@ export default function KegiatanKknDetailPage() {
             Dokumentasi tidak ditemukan
           </h1>
           <p className="mt-3 text-bark/75">
-            Dokumentasi kegiatan KKN tahun {tahun} belum tersedia.
+            Dokumentasi kegiatan KKN tahun {tahun} untuk Dusun {DUSUN_LABELS[dusun] ?? dusun} belum tersedia.
           </p>
           <Link
             to="/#kegiatan-kkn"
@@ -51,18 +53,31 @@ export default function KegiatanKknDetailPage() {
     <PortalLayout crumbs={[{ label: 'Kegiatan KKN', to: '/#kegiatan-kkn' }, { label: kegiatan.judul }]}>
       <Seo
         title={kegiatan.judul}
-        description={kegiatan.deskripsi || `Dokumentasi kegiatan KKN tahun ${kegiatan.tahun} di Desa Blongkeng.`}
+        description={
+          kegiatan.deskripsi ||
+          `Dokumentasi kegiatan KKN tahun ${kegiatan.tahun} di Dusun ${DUSUN_LABELS[kegiatan.dusun] ?? kegiatan.dusun}.`
+        }
         image={foto[0] ? storageUrl(foto[0]) : undefined}
       />
       <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-        <span className="inline-flex items-center gap-2 rounded-full bg-moss px-4 py-1.5 text-sm font-medium text-primary-dark">
-          <CalendarBlank size={18} weight="bold" />
-          Tahun {kegiatan.tahun}
-        </span>
+        <div className="flex flex-wrap gap-2">
+          <span className="inline-flex items-center gap-2 rounded-full bg-moss px-4 py-1.5 text-sm font-medium text-primary-dark">
+            <CalendarBlank size={18} weight="bold" />
+            Tahun {kegiatan.tahun}
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-full bg-moss px-4 py-1.5 text-sm font-medium text-primary-dark">
+            <Buildings size={18} weight="bold" />
+            Dusun {DUSUN_LABELS[kegiatan.dusun] ?? kegiatan.dusun}
+          </span>
+        </div>
 
         <h1 className="mt-5 font-heading text-3xl font-semibold leading-tight text-primary-dark sm:text-4xl">
           {kegiatan.judul}
         </h1>
+
+        {kegiatan.nama_kelompok && (
+          <p className="mt-1 text-sm font-medium text-muted">{kegiatan.nama_kelompok}</p>
+        )}
 
         {kegiatan.deskripsi && (
           <p className="mt-4 max-w-2xl leading-relaxed text-bark/80">{kegiatan.deskripsi}</p>

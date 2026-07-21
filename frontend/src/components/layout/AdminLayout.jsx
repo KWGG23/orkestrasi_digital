@@ -1,6 +1,7 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import {
   Buildings,
+  CalendarBlank,
   FileText,
   Leaf,
   Megaphone,
@@ -27,6 +28,7 @@ const NAV_LINKS_DESA = [
   { to: '/admin/umkm', label: 'UMKM', icon: Storefront, end: true },
   { to: '/admin/profil', label: 'Profil Dusun', icon: Buildings },
   { to: '/admin/pengumuman', label: 'Pengumuman', icon: Megaphone },
+  { to: '/admin/kegiatan-kkn', label: 'Kegiatan KKN', icon: CalendarBlank },
 ]
 
 export default function AdminLayout({ children }) {

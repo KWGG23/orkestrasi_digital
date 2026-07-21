@@ -65,9 +65,10 @@ Route::prefix('v1')->group(function () {
     Route::get('profil/{dusun}', [ProfilDusunController::class, 'show']);
     Route::get('pengumuman', [PengumumanController::class, 'index']);
 
-    // Kegiatan KKN — dokumentasi per tahun, publik
+    // Kegiatan KKN — dokumentasi per (tahun, dusun), publik. Satu dusun bisa
+    // punya kelompok KKN berbeda tiap tahun, jadi tahun saja tidak unik lagi.
     Route::get('kegiatan-kkn', [KegiatanKknController::class, 'index']);
-    Route::get('kegiatan-kkn/{tahun}', [KegiatanKknController::class, 'show']);
+    Route::get('kegiatan-kkn/{tahun}/{dusun}', [KegiatanKknController::class, 'show']);
 
     // Admin-only Portal (Sanctum) -- role:admin_desa, akun terpisah dari admin
     // bank sampah (lihat grup Bank Sampah di atas).
@@ -79,5 +80,8 @@ Route::prefix('v1')->group(function () {
         Route::post('pengumuman', [PengumumanController::class, 'store']);
         Route::put('pengumuman/{id}', [PengumumanController::class, 'update']);
         Route::delete('pengumuman/{id}', [PengumumanController::class, 'destroy']);
+        Route::post('kegiatan-kkn', [KegiatanKknController::class, 'store']);
+        Route::put('kegiatan-kkn/{id}', [KegiatanKknController::class, 'update']);
+        Route::delete('kegiatan-kkn/{id}', [KegiatanKknController::class, 'destroy']);
     });
 });

@@ -3,6 +3,8 @@ import { useKegiatanKknList } from '../../hooks/useKegiatanKknList.js'
 import FeatureCard from './FeatureCard.jsx'
 import SectionHeading from './SectionHeading.jsx'
 
+const DUSUN_LABELS = { karangasem: 'Karangasem', blongkeng: 'Blongkeng' }
+
 export default function KegiatanKknSection() {
   const { data, isLoading } = useKegiatanKknList()
   const items = data ?? []
@@ -30,12 +32,12 @@ export default function KegiatanKknSection() {
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {items.map((kegiatan) => (
                 <FeatureCard
-                  key={kegiatan.tahun}
+                  key={kegiatan.id}
                   icon={CalendarBlank}
-                  eyebrow="Tahun"
+                  eyebrow={`Tahun ${kegiatan.tahun} · ${DUSUN_LABELS[kegiatan.dusun] ?? kegiatan.dusun}`}
                   title={kegiatan.judul}
                   description={kegiatan.deskripsi ?? 'Dokumentasi sedang disusun.'}
-                  to={`/portal/kegiatan/${kegiatan.tahun}`}
+                  to={`/portal/kegiatan/${kegiatan.tahun}/${kegiatan.dusun}`}
                   badge={kegiatan.tahun}
                 />
               ))}
