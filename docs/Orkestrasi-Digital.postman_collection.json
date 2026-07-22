@@ -71,6 +71,67 @@
 					]
 				},
 				{
+					"name": "Login (Admin Desa)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login admin desa (role admin_desa). Token disimpan ke `{{token_desa}}` via test script -- dipakai request Portal Desa (UMKM/Profil Dusun/Pengumuman), terpisah dari `{{token}}` admin bank sampah.",
+						"auth": {
+							"type": "noauth"
+						},
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admindesa@desadijital.id\",\n  \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response contains token', function () {",
+									"    const json = pm.response.json();",
+									"    pm.expect(json.success).to.be.true;",
+									"    pm.expect(json.data.token).to.be.a('string').and.not.empty;",
+									"    pm.expect(json.data.user.role).to.eql('admin_desa');",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const json = pm.response.json();",
+									"    pm.collectionVariables.set('token_desa', json.data.token);",
+									"    console.log('Token admin desa tersimpan:', json.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
 					"name": "Login - Password Salah (negative)",
 					"request": {
 						"method": "POST",
@@ -1585,6 +1646,7 @@
 											"    const json = pm.response.json();",
 											"    if (json.data.length > 0) {",
 											"        pm.collectionVariables.set('kegiatan_tahun', json.data[0].tahun);",
+											"        pm.collectionVariables.set('kegiatan_dusun', json.data[0].dusun);",
 											"    }",
 											"}"
 										],
@@ -1594,18 +1656,19 @@
 							]
 						},
 						{
-							"name": "Detail Kegiatan KKN per Tahun",
+							"name": "Detail Kegiatan KKN per Tahun & Dusun",
 							"request": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base_url}}/kegiatan-kkn/{{kegiatan_tahun}}",
+									"raw": "{{base_url}}/kegiatan-kkn/{{kegiatan_tahun}}/{{kegiatan_dusun}}",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
 										"kegiatan-kkn",
-										"{{kegiatan_tahun}}"
+										"{{kegiatan_tahun}}",
+										"{{kegiatan_dusun}}"
 									]
 								},
 								"description": "Detail dokumentasi kegiatan KKN untuk satu tahun tertentu. Pakai {{kegiatan_tahun}} dari 'List Kegiatan KKN' di atas. Kalau belum ada data ter-seed, wajar dapat 404 — lihat test di bawah.",
@@ -1629,7 +1692,17 @@
 						}
 					]
 				}
-			]
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token_desa}}",
+						"type": "string"
+					}
+				]
+			}
 		},
 		{
 			"name": "🚪 Logout (jalankan terakhir)",
@@ -1722,6 +1795,14 @@
 			"value": "",
 			"type": "string",
 			"description": "Terisi otomatis dari 'List Kegiatan KKN' (tahun data pertama)"
+		},
+		{
+			"key": "token_desa",
+			"value": ""
+		},
+		{
+			"key": "kegiatan_dusun",
+			"value": ""
 		}
 	],
 	"auth": {
