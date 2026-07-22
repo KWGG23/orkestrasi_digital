@@ -29,11 +29,20 @@ export default defineConfig({
       testMatch: /.*\.setup\.js/,
     },
     {
-      // Test yang mengandalkan storageState dari auth.setup.js (satu sesi
-      // admin yang dipakai bersama semua test ini).
+      // Test yang mengandalkan storageState dari auth.setup.js (sesi admin
+      // bank sampah, dipakai bersama semua test scope bank sampah).
       name: 'chromium',
-      testIgnore: /admin-login\.spec\.js/,
+      testIgnore: /admin-login\.spec\.js|admin-pengumuman\.spec\.js/,
       use: { ...devices['Desktop Chrome'], storageState: 'playwright/.auth/admin.json' },
+      dependencies: ['setup'],
+    },
+    {
+      // Role admin_desa terpisah dari admin_bank_sampah (lihat backend
+      // routes/api.php, middleware role:...) -- test untuk fitur Portal Desa
+      // (Pengumuman, dst) butuh sesi admin desa sendiri, bukan admin.json.
+      name: 'chromium-desa',
+      testMatch: /admin-pengumuman\.spec\.js/,
+      use: { ...devices['Desktop Chrome'], storageState: 'playwright/.auth/admin-desa.json' },
       dependencies: ['setup'],
     },
     {
@@ -46,7 +55,7 @@ export default defineConfig({
       name: 'chromium-login-flow',
       testMatch: /admin-login\.spec\.js/,
       use: { ...devices['Desktop Chrome'] },
-      dependencies: ['chromium'],
+      dependencies: ['chromium', 'chromium-desa'],
     },
   ],
 })
