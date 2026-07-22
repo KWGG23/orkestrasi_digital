@@ -18,12 +18,18 @@ php artisan migrate --force
 
 echo "Seeding admin user..."
 # updateOrCreate berdasar email -- aman dijalankan tiap deploy, tidak bikin
-# duplikat. Seeder lain (JenisSampahSeeder, dll) sengaja TIDAK di sini karena
-# JenisSampahSeeder truncate() tabel jenis_sampahs setiap jalan -- kalau ikut
-# auto-run bakal nge-reset harga yang sudah diupdate admin lewat panel tiap
-# ada deploy baru. Seeder semacam itu dijalankan manual sekali lewat Render
-# Shell saja.
+# duplikat.
 php artisan db:seed --class=AdminSeeder --force
+
+# JenisSampahSeeder SENGAJA disertakan cuma untuk deploy ini -- one-time sync
+# harga terbaru BSI (update Juli 2026) ke production, karena Shell tidak
+# tersedia di plan gratis Render sebagai jalur "run once" yang lebih rapi.
+# Baris ini WAJIB dicabut lagi di commit berikutnya setelah deploy ini
+# berhasil: seeder sekarang aman dipanggil ulang (updateOrCreate per nama,
+# bukan truncate lagi), TAPI kalau dibiarkan permanen di sini dia bakal
+# nimpa balik harga yang diubah admin manual lewat panel tiap ada deploy
+# baru untuk fitur lain -- menggagalkan tujuan fitur "Tambah Jenis Sampah".
+php artisan db:seed --class=JenisSampahSeeder --force
 
 # storage:link sengaja tidak dijalankan -- disk 'public' produksi pakai
 # FILESYSTEM_PUBLIC_DRIVER=s3 (Supabase Storage), symlink lokal tidak relevan.
