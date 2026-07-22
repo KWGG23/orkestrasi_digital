@@ -108,4 +108,97 @@ class JenisSampahTest extends TestCase
 
         $response->assertStatus(404);
     }
+
+    public function test_tamu_tanpa_token_tidak_bisa_tambah_jenis_sampah(): void
+    {
+        $response = $this->postJson('/api/v1/jenis-sampah', [
+            'nama' => 'Kardus Baru',
+            'kategori' => 'Kertas',
+            'satuan' => 'kg',
+            'harga_per_satuan' => 1000,
+        ]);
+
+        $response->assertStatus(401);
+        $this->assertDatabaseCount('jenis_sampahs', 0);
+    }
+
+    public function test_admin_bisa_tambah_jenis_sampah_baru(): void
+    {
+        Sanctum::actingAs(User::factory()->create());
+
+        $response = $this->postJson('/api/v1/jenis-sampah', [
+            'nama' => 'Kardus Baru',
+            'kategori' => 'Kertas',
+            'satuan' => 'kg',
+            'harga_per_satuan' => 1500,
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.nama', 'Kardus Baru')
+            // aktif tidak dikirim di payload -> respons harus tetap merefleksikan
+            // default kolom di DB (true), bukan null dari instance in-memory.
+            ->assertJsonPath('data.aktif', true);
+
+        $this->assertDatabaseHas('jenis_sampahs', ['nama' => 'Kardus Baru', 'kategori' => 'Kertas']);
+    }
+
+    public function test_admin_bank_sampah_bisa_dipakai_admin_desa_ditolak_tambah_jenis_sampah(): void
+    {
+        Sanctum::actingAs(User::factory()->create(['role' => User::ROLE_DESA]));
+
+        $response = $this->postJson('/api/v1/jenis-sampah', [
+            'nama' => 'Kardus Baru',
+            'kategori' => 'Kertas',
+            'satuan' => 'kg',
+            'harga_per_satuan' => 1500,
+        ]);
+
+        $response->assertStatus(403);
+    }
+
+    public function test_tambah_jenis_sampah_dengan_nama_duplikat_gagal_validasi(): void
+    {
+        Sanctum::actingAs(User::factory()->create());
+        JenisSampah::factory()->create(['nama' => 'Kardus']);
+
+        $response = $this->postJson('/api/v1/jenis-sampah', [
+            'nama' => 'Kardus',
+            'kategori' => 'Kertas',
+            'satuan' => 'kg',
+            'harga_per_satuan' => 1000,
+        ]);
+
+        $response->assertStatus(422)->assertJsonValidationErrors('nama');
+    }
+
+    public function test_tambah_jenis_sampah_dengan_satuan_tidak_valid_gagal_validasi(): void
+    {
+        Sanctum::actingAs(User::factory()->create());
+
+        $response = $this->postJson('/api/v1/jenis-sampah', [
+            'nama' => 'Kardus Baru',
+            'kategori' => 'Kertas',
+            'satuan' => 'liter',
+            'harga_per_satuan' => 1000,
+        ]);
+
+        $response->assertStatus(422)->assertJsonValidationErrors('satuan');
+    }
+
+    public function test_admin_bisa_ubah_nama_dan_kategori_jenis_sampah(): void
+    {
+        Sanctum::actingAs(User::factory()->create());
+        $jenis = JenisSampah::factory()->create(['nama' => 'Nama Lama', 'kategori' => 'Lainnya']);
+
+        $response = $this->putJson("/api/v1/jenis-sampah/{$jenis->id}", [
+            'nama' => 'Nama Baru',
+            'kategori' => 'Plastik',
+            'harga_per_satuan' => $jenis->harga_per_satuan,
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('data.nama', 'Nama Baru')
+            ->assertJsonPath('data.kategori', 'Plastik');
+    }
 }

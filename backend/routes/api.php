@@ -45,6 +45,7 @@ Route::prefix('v1')->group(function () {
         Route::post('nasabah', [NasabahController::class, 'store']);
         Route::post('setoran', [SetoranController::class, 'store']);
         Route::post('tabungan/tarik', [TabunganController::class, 'tarik']);
+        Route::post('jenis-sampah', [JenisSampahController::class, 'store']);
         Route::put('jenis-sampah/{id}', [JenisSampahController::class, 'update']);
         Route::get('laporan/harian', [LaporanController::class, 'harian']);
         Route::get('laporan/bulanan', [LaporanController::class, 'bulanan']);
